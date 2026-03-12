@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { StatusBar } from 'react-native';
-import LoginScreen from './src/screens/LoginScreen';
-import PosScreen from './src/screens/PosScreen';
+import Login from './src/modules/auth/Login';
+import PosHome from './src/modules/pos/PosHome';
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -19,11 +19,11 @@ export default function App() {
 
   return (
     <>
-      <StatusBar barStyle="dark-content" />
+      <StatusBar barStyle="dark-content" backgroundColor="#F8FAFC" />
       {!user ? (
-        <LoginScreen onLoginSuccess={handleLogin} />
+        <Login onLoginSuccess={handleLogin} />
       ) : (
-        <PosScreen user={user} token={token} onLogout={handleLogout} />
+        <PosHome user={user} token={token} onLogout={handleLogout} />
       )}
     </>
   );
