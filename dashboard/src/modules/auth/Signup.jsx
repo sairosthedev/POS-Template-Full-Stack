@@ -6,7 +6,7 @@ import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Card } from '../../components/ui/Card';
 
-const API = 'http://localhost:5000/api';
+const API = ''; // baseURL is set globally in services/axios.config.js
 
 const Signup = ({ onLogin }) => {
   const navigate = useNavigate();

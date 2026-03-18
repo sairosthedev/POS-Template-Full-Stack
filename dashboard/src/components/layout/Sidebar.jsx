@@ -13,19 +13,20 @@ import {
   Receipt
 } from 'lucide-react';
 
-const Sidebar = () => {
+const Sidebar = ({ user }) => {
   const location = useLocation();
+  const role = String(user?.role || '').toLowerCase();
   const navItems = [
-    { name: 'Home', path: '/', icon: <Home size={20} /> },
-    { name: 'Reports', path: '/reports', icon: <FileText size={20} /> },
-    { name: 'Products', path: '/products', icon: <Package size={20} /> },
-    { name: 'Inventory Management', path: '/inventory', icon: <Box size={20} /> },
-    { name: 'Store Management', path: '/stores', icon: <Store size={20} /> },
-    { name: 'People', path: '/people', icon: <Users size={20} /> },
-    { name: 'Expenses', path: '/expenses', icon: <Receipt size={20} /> },
-    { name: 'Support', path: '/support', icon: <HelpCircle size={20} /> },
-    { name: 'Settings', path: '/settings', icon: <Settings size={20} /> },
-  ];
+    { name: 'Home', path: '/', icon: <Home size={20} />, roles: ['admin', 'manager'] },
+    { name: 'Reports', path: '/reports', icon: <FileText size={20} />, roles: ['admin', 'manager'] },
+    { name: 'Products', path: '/products', icon: <Package size={20} />, roles: ['admin', 'manager'] },
+    { name: 'Inventory Management', path: '/inventory', icon: <Box size={20} />, roles: ['admin', 'manager'] },
+    { name: 'Store Management', path: '/stores', icon: <Store size={20} />, roles: ['admin'] },
+    { name: 'People', path: '/people', icon: <Users size={20} />, roles: ['admin', 'manager'] },
+    { name: 'Expenses', path: '/expenses', icon: <Receipt size={20} />, roles: ['admin', 'manager'] },
+    { name: 'Support', path: '/support', icon: <HelpCircle size={20} />, roles: ['admin', 'manager'] },
+    { name: 'Settings', path: '/settings', icon: <Settings size={20} />, roles: ['admin'] },
+  ].filter((i) => !i.roles || i.roles.includes(role));
 
   return (
     <div className="w-[260px] bg-sidebar text-slate-400 flex flex-col h-screen shrink-0 border-r border-white/5">
