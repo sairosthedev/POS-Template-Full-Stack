@@ -12,7 +12,11 @@ const SaleSchema = new mongoose.Schema({
   branchId: { type: mongoose.Schema.Types.ObjectId, ref: 'Branch' },
   items: [SaleItemSchema],
   total: { type: Number, required: true },
-  paymentMethod: { type: String, enum: ['Cash', 'Card', 'Mobile'], required: true },
+  paymentMethod: { type: String, required: true },
+  amountReceived: { type: Number, default: 0 },
+  change: { type: Number, default: 0 },
+  receiptNo: { type: String, index: true },
+  status: { type: String, enum: ['Completed', 'Voided'], default: 'Completed' },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Sale', SaleSchema);

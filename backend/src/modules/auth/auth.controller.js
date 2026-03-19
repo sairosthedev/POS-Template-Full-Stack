@@ -40,3 +40,26 @@ exports.register = async (req, res) => {
     return errorResponse(res, error.message);
   }
 };
+
+exports.pinLogin = async (req, res) => {
+  const { email, pin } = req.body;
+  try {
+    const user = await User.findOne({ email }).select('+pinHash');
+    if (!user) return errorResponse(res, 'Invalid email or PIN', 401);
+
+    const ok = await user.comparePin(String(pin || ''));
+    if (!ok) return errorResponse(res, 'Invalid email or PIN', 401);
+
+    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1d' });
+    return successResponse(
+      res,
+      {
+        token,
+        user: { id: user._id, name: user.name, email: user.email, role: user.role },
+      },
+      'Login successful',
+    );
+  } catch (error) {
+    return errorResponse(res, error.message);
+  }
+};

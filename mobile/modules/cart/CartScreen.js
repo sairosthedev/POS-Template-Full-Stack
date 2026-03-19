@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, FlatList, Pressable, TextInput } from 'react-native';
+import { View, Text, FlatList, Pressable } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { clearCart, removeFromCart, setPaymentMethod, setQuantity } from '../../state/cartSlice';
@@ -10,7 +10,8 @@ import { Card } from '../../ui/Card';
 import { PrimaryButton } from '../../ui/PrimaryButton';
 import { theme } from '../../ui/theme';
 import { HeaderBar } from '../../ui/HeaderBar';
-import { printReceipt } from '../../services/printer';
+import { Keypad } from '../../ui/Keypad';
+import { api } from '../../services/api';
 
 export default function CartScreen({ navigation }) {
   const dispatch = useDispatch();
@@ -215,23 +216,21 @@ export default function CartScreen({ navigation }) {
           <Text style={{ ...theme.text.body, color: theme.colors.muted, marginBottom: 8 }}>
             Amount received
           </Text>
-          <TextInput
-            value={amountReceived}
-            onChangeText={setAmountReceived}
-            keyboardType="numeric"
-            placeholder="0.00"
-            placeholderTextColor="rgba(234, 240, 255, 0.45)"
+          <View
             style={{
               backgroundColor: theme.colors.surface,
               borderWidth: 1,
               borderColor: theme.colors.border,
-              color: theme.colors.text,
+              borderRadius: theme.radius.md,
               paddingVertical: 12,
               paddingHorizontal: 14,
-              borderRadius: theme.radius.md,
-            }}
-          />
+            }}>
+            <Text style={{ color: theme.colors.text, fontWeight: '900', fontSize: 22 }}>
+              ${amountReceived || '0'}
+            </Text>
+          </View>
         </View>
+        <Keypad value={amountReceived} onChange={setAmountReceived} />
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 14 }}>
           <Text style={{ ...theme.text.h1, color: theme.colors.text }}>Total</Text>
           <Text style={{ ...theme.text.h1, color: theme.colors.gold }}>
@@ -260,26 +259,37 @@ export default function CartScreen({ navigation }) {
             const createdAt = new Date().toISOString();
             const paid = receivedNumber;
             const changeDue = paymentMethod === 'cash' ? change : 0;
-            const sale = {
-              _id: saleId,
-              cashierId: null,
-              branchId: null,
-              total,
-              paymentMethod,
-              createdAt,
-              amountReceived: paid,
-              change: changeDue,
+            const payload = {
               items: items.map((i) => ({
                 productId: i.productId,
                 quantity: i.quantity,
                 price: i.price,
               })),
+              paymentMethod,
+              amountReceived: paid,
+              change: changeDue,
             };
-            await enqueueSync('sale:create', sale);
-            const html = buildReceiptHtml({ saleId, createdAt, paid, changeDue });
+
+            // Prefer online-first: create the real sale immediately.
+            let serverSale = null;
+            try {
+              const res = await api.post('/api/sales', payload);
+              serverSale = res?.data?.data || res?.data;
+            } catch {
+              // Offline / API down: queue for later sync
+              await enqueueSync('sale:create', payload);
+            }
+
+            const receiptId = serverSale?.receiptNo || serverSale?._id || saleId;
+            const html = buildReceiptHtml({
+              saleId: receiptId,
+              createdAt: serverSale?.createdAt || createdAt,
+              paid,
+              changeDue,
+            });
             const textLines = [
               'MICCS STORE',
-              `Receipt: ${saleId}`,
+              `Receipt: ${receiptId}`,
               `Payment: ${paymentMethod}`,
               ...items.map(
                 (i) =>
@@ -290,10 +300,24 @@ export default function CartScreen({ navigation }) {
               `CHANGE: $${Number(changeDue).toFixed(2)}`,
               'Thank you',
             ];
-            await printReceipt({ html, textLines }).catch(() => {});
             dispatch(clearCart());
-            await dispatch(syncNow());
-            navigation.goBack();
+            // Fire-and-forget sync (don't block UI)
+            dispatch(syncNow());
+            // Replace Cart with Receipt so it stays visible
+            navigation.replace('Receipt', {
+              sale: serverSale || {
+                _id: receiptId,
+                total,
+                paymentMethod,
+                createdAt,
+                amountReceived: paid,
+                change: changeDue,
+                status: 'Completed',
+                receiptNo: receiptId,
+              },
+              html,
+              textLines,
+            });
           }}
         />
         <View style={{ height: 8 }} />

@@ -7,7 +7,7 @@ import { Modal } from '../../components/ui/Modal';
 import { Table, TableHead, TableBody, TableHeader, TableRow, TableCell } from '../../components/ui/Table';
 import { Card } from '../../components/ui/Card';
 
-const API = 'http://localhost:5000/api';
+const API = ''; // baseURL is configured globally (services/axios.config.js)
 const empty = { name: '', category: '', stock: '', cost: '', price: '', unit: 'Unit', stockAlert: 5 };
 
 const InventoryManagement = () => {

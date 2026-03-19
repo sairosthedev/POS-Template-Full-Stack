@@ -24,7 +24,7 @@ const DashboardHome = () => {
   const [activeTab, setActiveTab] = useState('Daily');
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/reports/stats')
+    axios.get('/reports/stats')
       .then(res => {
         const data = res.data.data;
         setStats({

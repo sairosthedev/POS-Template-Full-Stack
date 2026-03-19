@@ -2,6 +2,15 @@ const InventoryLog = require('./inventory.model');
 const Product = require('../products/product.model');
 const { successResponse, errorResponse } = require('../../utils/apiResponse');
 
+exports.getInventory = async (req, res) => {
+  try {
+    const products = await Product.find({}).select('name barcode category stock unit updatedAt');
+    return successResponse(res, products);
+  } catch (error) {
+    return errorResponse(res, error.message);
+  }
+};
+
 exports.adjustStock = async (req, res) => {
   const { productId, quantity, changeType, note, userId } = req.body;
   try {

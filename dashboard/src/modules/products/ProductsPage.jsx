@@ -7,7 +7,7 @@ import { Modal } from '../../components/ui/Modal';
 import { Table, TableHead, TableBody, TableHeader, TableRow, TableCell } from '../../components/ui/Table';
 import ImportProductsModal from '../../components/ImportProductsModal';
 
-const API = 'http://localhost:5000/api';
+const API = ''; // baseURL is configured globally (services/axios.config.js)
 
 const UNITS = ['Unit', 'Item', 'Kg', 'Gram', 'Litre', 'Piece', 'Pack', 'Box', 'Carton', 'Dozen'];
 const STOCK_TYPES = ['Defined', 'Unlimited', 'None'];

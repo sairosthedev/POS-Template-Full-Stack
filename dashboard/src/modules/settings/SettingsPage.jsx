@@ -5,7 +5,7 @@ import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 
-const API = 'http://localhost:5000/api';
+const API = ''; // baseURL is configured globally (services/axios.config.js)
 
 const SystemSettings = () => {
   const [settings, setSettings] = useState({

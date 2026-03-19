@@ -18,6 +18,19 @@ export const login = createAsyncThunk(
   },
 );
 
+export const pinLogin = createAsyncThunk(
+  'auth/pinLogin',
+  async ({ email, pin } = {}, { rejectWithValue }) => {
+    try {
+      const res = await api.post('/api/auth/pin-login', { email, pin });
+      return res.data;
+    } catch (e) {
+      const msg = e?.response?.data?.message || e?.message || 'PIN login failed';
+      return rejectWithValue(msg);
+    }
+  },
+);
+
 export const hydrateAuth = createAsyncThunk('auth/hydrate', async () => {
   const token = await SecureStore.getItemAsync(TOKEN_KEY);
   const userRaw = await SecureStore.getItemAsync(USER_KEY);
@@ -69,9 +82,10 @@ const authSlice = createSlice({
       })
       .addCase(login.fulfilled, (state, action) => {
         state.status = 'succeeded';
-        const token = action.payload?.token || action.payload?.accessToken || null;
+        const data = action.payload?.data || action.payload || {};
+        const token = data?.token || data?.accessToken || action.payload?.token || action.payload?.accessToken || null;
         state.token = token;
-        state.user = action.payload?.user || null;
+        state.user = data?.user || action.payload?.user || null;
         state.hydrated = true;
         setAuthToken(token);
         if (token) SecureStore.setItemAsync(TOKEN_KEY, String(token)).catch(() => {});
@@ -80,6 +94,28 @@ const authSlice = createSlice({
       .addCase(login.rejected, (state, action) => {
         state.status = 'failed';
         state.error = action.payload || action.error?.message || 'Login failed';
+        state.hydrated = true;
+      });
+
+    builder
+      .addCase(pinLogin.pending, (state) => {
+        state.status = 'loading';
+        state.error = null;
+      })
+      .addCase(pinLogin.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        const data = action.payload?.data || action.payload || {};
+        const token = data?.token || data?.accessToken || action.payload?.token || action.payload?.accessToken || null;
+        state.token = token;
+        state.user = data?.user || action.payload?.user || null;
+        state.hydrated = true;
+        setAuthToken(token);
+        if (token) SecureStore.setItemAsync(TOKEN_KEY, String(token)).catch(() => {});
+        if (state.user) SecureStore.setItemAsync(USER_KEY, JSON.stringify(state.user)).catch(() => {});
+      })
+      .addCase(pinLogin.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload || action.error?.message || 'PIN login failed';
         state.hydrated = true;
       });
   },

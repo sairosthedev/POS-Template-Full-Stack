@@ -21,6 +21,7 @@ import ScanScreen from './modules/scan/ScanScreen';
 import NetInfo from '@react-native-community/netinfo';
 import { syncNow } from './state/syncSlice';
 import { hydrateAuth } from './state/authSlice';
+import ReceiptScreen from './modules/sales/ReceiptScreen';
 
 const Stack = createStackNavigator();
 const Tabs = createBottomTabNavigator();
@@ -80,6 +81,30 @@ function MainTabs() {
   );
 }
 
+function RootStack() {
+  const token = useSelector((s) => s.auth.token);
+  const hydrated = useSelector((s) => s.auth.hydrated);
+
+  // Avoid flashing the wrong navigator before SecureStore loads
+  if (!hydrated) return null;
+
+  return (
+    <Stack.Navigator initialRouteName={token ? 'Main' : 'Auth'}>
+      <Stack.Screen name="Auth" component={AuthScreen} options={{ headerShown: false }} />
+
+      {token ? (
+        <>
+          <Stack.Screen name="Main" component={MainTabs} options={{ headerShown: false }} />
+          <Stack.Screen name="Cart" component={CartScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="Scan" component={ScanScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="Receipt" component={ReceiptScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="Users" component={UsersScreen} options={{ headerShown: false }} />
+        </>
+      ) : null}
+    </Stack.Navigator>
+  );
+}
+
 export default function App() {
   React.useEffect(() => {
     initDb().catch(() => {
@@ -103,13 +128,7 @@ export default function App() {
   return (
     <Provider store={store}>
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Auth">
-          <Stack.Screen name="Auth" component={AuthScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="Main" component={MainTabs} options={{ headerShown: false }} />
-          <Stack.Screen name="Cart" component={CartScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="Scan" component={ScanScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="Users" component={UsersScreen} options={{ headerShown: false }} />
-        </Stack.Navigator>
+        <RootStack />
       </NavigationContainer>
     </Provider>
   );

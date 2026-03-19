@@ -6,7 +6,7 @@ import { Input } from '../../components/ui/Input';
 import { Modal } from '../../components/ui/Modal';
 import { Card } from '../../components/ui/Card';
 
-const API = 'http://localhost:5000/api';
+const API = ''; // baseURL is configured globally (services/axios.config.js)
 const empty = { name: '', address: '', contactNumber: '', status: 'Active' };
 
 const StoreManagement = () => {

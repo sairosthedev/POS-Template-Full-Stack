@@ -4,7 +4,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 import { Card } from '../../components/ui/Card';
 import { TrendingUp, DollarSign, ShoppingCart, Package } from 'lucide-react';
 
-const API = 'http://localhost:5000/api';
+const API = ''; // baseURL is configured globally (services/axios.config.js)
 
 const COLORS = ['#2563EB', '#3B82F6', '#60A5FA', '#93C5FD', '#BFDBFE'];
 

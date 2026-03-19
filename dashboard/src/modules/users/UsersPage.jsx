@@ -6,9 +6,9 @@ import { Input } from '../../components/ui/Input';
 import { Modal } from '../../components/ui/Modal';
 import { Table, TableHead, TableBody, TableHeader, TableRow, TableCell } from '../../components/ui/Table';
 
-const API = 'http://localhost:5000/api';
+const API = ''; // baseURL is configured globally (services/axios.config.js)
 const ROLES = ['Admin', 'Manager', 'Cashier'];
-const empty = { name: '', email: '', password: '', role: 'Cashier', branchId: '' };
+const empty = { name: '', email: '', password: '', pin: '', role: 'Cashier', branchId: '' };
 
 const roleColors = {
   Admin: 'bg-purple-100 text-purple-700',
@@ -42,6 +42,7 @@ const PeopleManagement = () => {
       const payload = { ...current };
       if (!payload.branchId) delete payload.branchId;
       if (current._id && !payload.password) delete payload.password;
+      if (current._id && !payload.pin) delete payload.pin;
 
       if (current._id) {
         await axios.put(`${API}/users/${current._id}`, payload);
@@ -143,6 +144,16 @@ const PeopleManagement = () => {
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
+
+          <Input
+            label={current._id ? 'Set / Reset POS PIN (4+ digits)' : 'POS PIN (4+ digits)'}
+            type="text"
+            inputMode="numeric"
+            placeholder="1234"
+            value={current.pin}
+            onChange={e => setCurrent({ ...current, pin: e.target.value.replace(/\D/g, '').slice(0, 6) })}
+            className="bg-slate-50/50 font-bold tracking-widest"
+          />
 
           <div className="grid grid-cols-2 gap-6">
             <div className="flex flex-col gap-2">

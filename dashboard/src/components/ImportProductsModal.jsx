@@ -6,7 +6,7 @@ import { Modal } from './ui/Modal';
 import { Button } from './ui/Button';
 import { Table, TableHead, TableBody, TableHeader, TableRow, TableCell } from './ui/Table';
 
-const API = 'http://localhost:5000/api';
+const API = ''; // baseURL is configured globally (services/axios.config.js)
 
 // Required product fields that must be mapped
 const REQUIRED_FIELDS = ['name', 'category', 'price', 'cost'];

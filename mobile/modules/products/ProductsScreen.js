@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { loadLocalProducts, refreshProducts } from '../../state/productsSlice';
 import { addToCart } from '../../state/cartSlice';
+import { logout } from '../../state/authSlice';
 import { Screen } from '../../ui/Screen';
 import { PrimaryButton } from '../../ui/PrimaryButton';
 import { theme } from '../../ui/theme';
@@ -98,23 +99,40 @@ export default function ProductsScreen({ navigation, route }) {
       <View
         style={{
           flexDirection: 'row',
+          flexWrap: 'wrap',
           gap: 10,
           padding: theme.space.md,
           backgroundColor: 'rgba(7, 18, 37, 0.92)',
           borderTopWidth: 1,
           borderTopColor: theme.colors.border,
         }}>
-        <PrimaryButton title="Scan" tone="gold" onPress={() => navigation.navigate('Scan')} />
-        <PrimaryButton
-          title={`Cart (${cartCount})  $${Number(cartTotal).toFixed(2)}`}
-          disabled={cartCount === 0}
-          onPress={() => navigation.navigate('Cart')}
-        />
-        <PrimaryButton
-          title={status === 'loading' ? 'Syncing…' : 'Refresh'}
-          loading={status === 'loading'}
-          onPress={() => dispatch(refreshProducts())}
-        />
+        <View style={{ flexGrow: 1, flexBasis: '48%' }}>
+          <PrimaryButton title="Scan" tone="gold" onPress={() => navigation.navigate('Scan')} />
+        </View>
+        <View style={{ flexGrow: 1, flexBasis: '48%' }}>
+          <PrimaryButton
+            title={`Cart (${cartCount})  $${Number(cartTotal).toFixed(2)}`}
+            disabled={cartCount === 0}
+            onPress={() => navigation.navigate('Cart')}
+          />
+        </View>
+        <View style={{ flexGrow: 1, flexBasis: '48%' }}>
+          <PrimaryButton
+            title={status === 'loading' ? 'Syncing…' : 'Refresh'}
+            loading={status === 'loading'}
+            onPress={() => dispatch(refreshProducts())}
+          />
+        </View>
+        <View style={{ flexGrow: 1, flexBasis: '48%' }}>
+          <PrimaryButton
+            title="Logout"
+            tone="danger"
+            onPress={() => {
+              dispatch(logout());
+              navigation.reset({ index: 0, routes: [{ name: 'Auth' }] });
+            }}
+          />
+        </View>
       </View>
     </View>
   );
