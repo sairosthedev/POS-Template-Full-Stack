@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Edit2, Plus, AlertTriangle, Package, Archive, Layers } from 'lucide-react';
+import { Edit2, AlertTriangle, Archive, Layers, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Modal } from '../../components/ui/Modal';
@@ -10,20 +10,32 @@ import { Card } from '../../components/ui/Card';
 const API = ''; // baseURL is configured globally (services/axios.config.js)
 const empty = { name: '', category: '', stock: '', cost: '', price: '', unit: 'Unit', stockAlert: 5 };
 
+const LIMIT = 25;
+
 const InventoryManagement = () => {
   const [products, setProducts] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [current, setCurrent] = useState(empty);
   const [filter, setFilter] = useState('all');
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({ page: 1, limit: LIMIT, total: 0, totalPages: 0 });
+  const [stats, setStats] = useState({ lowStock: 0, outOfStock: 0 });
+  const [loading, setLoading] = useState(true);
 
-  useEffect(() => { fetchProducts(); }, []);
-
-  const fetchProducts = async () => {
+  const fetchProducts = async (p = page, f = filter) => {
     try {
-      const res = await axios.get(`${API}/products`);
-      setProducts(res.data.data || []);
-    } catch { setProducts([]); }
+      setLoading(true);
+      const res = await axios.get(`${API}/products`, {
+        params: { page: p, limit: LIMIT, filter: f },
+      });
+      const d = res.data;
+      setProducts(d.data || []);
+      if (d.pagination) setPagination(d.pagination);
+      if (d.stats) setStats(d.stats);
+    } catch { setProducts([]); } finally { setLoading(false); }
   };
+
+  useEffect(() => { fetchProducts(page, filter); }, [page, filter]);
 
   const handleAdjustStock = async (e) => {
     e.preventDefault();
@@ -36,12 +48,14 @@ const InventoryManagement = () => {
     }
   };
 
-  const lowStock = products.filter(p => p.stock > 0 && p.stock <= (p.stockAlert || 5));
-  const outOfStock = products.filter(p => p.stock === 0);
+  const handleFilter = (f) => {
+    setFilter(f);
+    setPage(1);
+  };
 
-  const filtered = filter === 'low' ? lowStock
-    : filter === 'out' ? outOfStock
-    : products;
+  const totalDisplay = pagination.total;
+  const lowStockCount = stats.lowStock;
+  const outOfStockCount = stats.outOfStock;
 
   return (
     <div className="w-full">
@@ -56,42 +70,42 @@ const InventoryManagement = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <Card 
           className={`flex items-center gap-5 border-slate-100 shadow-xl shadow-slate-200/50 cursor-pointer transition-all duration-300 ${filter === 'all' ? 'ring-2 ring-primary border-primary/20 scale-[1.02]' : 'hover:scale-[1.01]'}`} 
-          onClick={() => setFilter('all')}
+          onClick={() => handleFilter('all')}
         >
           <div className="w-14 h-14 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center shrink-0 shadow-sm">
             <Layers size={24} className="text-slate-400" />
           </div>
           <div>
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Catalog Size</p>
-            <p className="text-2xl font-black text-text-main tracking-tight leading-none">{products.length}</p>
+            <p className="text-2xl font-black text-text-main tracking-tight leading-none">{totalDisplay}</p>
             <p className="text-[10px] text-slate-400 font-bold mt-1.5 uppercase tracking-tighter">Total unique SKUs</p>
           </div>
         </Card>
 
         <Card 
           className={`flex items-center gap-5 border-slate-100 shadow-xl shadow-slate-200/50 cursor-pointer transition-all duration-300 ${filter === 'low' ? 'ring-2 ring-warning border-warning/20 scale-[1.02]' : 'hover:scale-[1.01]'}`} 
-          onClick={() => setFilter('low')}
+          onClick={() => handleFilter('low')}
         >
           <div className="w-14 h-14 rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-center shrink-0 shadow-sm">
             <AlertTriangle size={24} className="text-warning" />
           </div>
           <div>
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Restock Alerts</p>
-            <p className="text-2xl font-black text-warning tracking-tight leading-none">{lowStock.length}</p>
+            <p className="text-2xl font-black text-warning tracking-tight leading-none">{lowStockCount}</p>
             <p className="text-[10px] text-slate-400 font-bold mt-1.5 uppercase tracking-tighter">Critical levels reached</p>
           </div>
         </Card>
 
         <Card 
           className={`flex items-center gap-5 border-slate-100 shadow-xl shadow-slate-200/50 cursor-pointer transition-all duration-300 ${filter === 'out' ? 'ring-2 ring-danger border-danger/20 scale-[1.02]' : 'hover:scale-[1.01]'}`} 
-          onClick={() => setFilter('out')}
+          onClick={() => handleFilter('out')}
         >
           <div className="w-14 h-14 rounded-2xl bg-red-50 border border-red-100 flex items-center justify-center shrink-0 shadow-sm">
             <Archive size={24} className="text-danger" />
           </div>
           <div>
             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Depleted Items</p>
-            <p className="text-2xl font-black text-danger tracking-tight leading-none">{outOfStock.length}</p>
+            <p className="text-2xl font-black text-danger tracking-tight leading-none">{outOfStockCount}</p>
             <p className="text-[10px] text-slate-400 font-bold mt-1.5 uppercase tracking-tighter">Immediate action required</p>
           </div>
         </Card>
@@ -119,57 +133,90 @@ const InventoryManagement = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50">
-              {filtered.map(p => {
-                const isOut = p.stock === 0;
-                const isLow = !isOut && p.stock <= (p.stockAlert || 5);
-                return (
-                  <tr key={p._id} className="group hover:bg-slate-50/50 transition-colors">
-                    <td className="px-8 py-5">
-                      <p className="text-sm font-black text-text-main">{p.name}</p>
-                      <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight mt-0.5">#{p._id.slice(-6).toUpperCase()}</p>
-                    </td>
-                    <td className="px-8 py-5 text-center">
-                      <span className="px-2.5 py-1 rounded-lg bg-blue-50 text-primary text-[10px] font-black uppercase tracking-wider border border-blue-100/50">
-                        {p.category}
-                      </span>
-                    </td>
-                    <td className="px-8 py-5 text-center text-sm font-bold text-slate-500 uppercase tracking-tighter">{p.unit}</td>
-                    <td className="px-8 py-5 text-center">
-                      <p className="text-lg font-black text-text-main leading-none">{p.stock}</p>
-                    </td>
-                    <td className="px-8 py-5 text-center text-sm font-bold text-slate-400 italic">
-                      {p.stockAlert || 5} units
-                    </td>
-                    <td className="px-8 py-5 text-center">
-                      <span className={`px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border ${
-                        isOut ? 'bg-red-50 text-danger border-red-100' :
-                        isLow ? 'bg-amber-50 text-warning border-amber-100' :
-                        'bg-emerald-50 text-success border-emerald-100'
-                      }`}>
-                        {isOut ? 'Critical Depletion' : isLow ? 'Low Resource' : 'Operational'}
-                      </span>
-                    </td>
-                    <td className="px-8 py-5 text-right">
-                      <button 
-                        onClick={() => { setCurrent({ ...p }); setShowModal(true); }}
-                        className="w-9 h-9 inline-flex items-center justify-center rounded-xl bg-slate-100 text-slate-400 hover:bg-primary hover:text-white transition-all active:scale-90"
-                      >
-                        <Edit2 size={16} />
-                      </button>
-                    </td>
-                  </tr>
-                );
-              })}
-              {filtered.length === 0 && (
+              {loading ? (
+                <tr>
+                  <td colSpan={7} className="px-8 py-20 text-center text-slate-400 font-medium">Loading…</td>
+                </tr>
+              ) : products.length === 0 ? (
                 <tr>
                   <td colSpan={7} className="px-8 py-20 text-center text-slate-300 italic font-medium">
                     No items detected within the "{filter}" logistics filter.
                   </td>
                 </tr>
+              ) : (
+                products.map(p => {
+                  const isOut = p.stock === 0;
+                  const isLow = !isOut && p.stock <= (p.stockAlert || 5);
+                  return (
+                    <tr key={p._id} className="group hover:bg-slate-50/50 transition-colors">
+                      <td className="px-8 py-5">
+                        <p className="text-sm font-black text-text-main">{p.name}</p>
+                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight mt-0.5">#{p._id.slice(-6).toUpperCase()}</p>
+                      </td>
+                      <td className="px-8 py-5 text-center">
+                        <span className="px-2.5 py-1 rounded-lg bg-blue-50 text-primary text-[10px] font-black uppercase tracking-wider border border-blue-100/50">
+                          {p.category}
+                        </span>
+                      </td>
+                      <td className="px-8 py-5 text-center text-sm font-bold text-slate-500 uppercase tracking-tighter">{p.unit}</td>
+                      <td className="px-8 py-5 text-center">
+                        <p className="text-lg font-black text-text-main leading-none">{p.stock}</p>
+                      </td>
+                      <td className="px-8 py-5 text-center text-sm font-bold text-slate-400 italic">
+                        {p.stockAlert || 5} units
+                      </td>
+                      <td className="px-8 py-5 text-center">
+                        <span className={`px-2.5 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest border ${
+                          isOut ? 'bg-red-50 text-danger border-red-100' :
+                          isLow ? 'bg-amber-50 text-warning border-amber-100' :
+                          'bg-emerald-50 text-success border-emerald-100'
+                        }`}>
+                          {isOut ? 'Critical Depletion' : isLow ? 'Low Resource' : 'Operational'}
+                        </span>
+                      </td>
+                      <td className="px-8 py-5 text-right">
+                        <button 
+                          onClick={() => { setCurrent({ ...p }); setShowModal(true); }}
+                          className="w-9 h-9 inline-flex items-center justify-center rounded-xl bg-slate-100 text-slate-400 hover:bg-primary hover:text-white transition-all active:scale-90"
+                        >
+                          <Edit2 size={16} />
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })
               )}
             </tbody>
           </table>
         </div>
+        {pagination.totalPages > 1 && (
+          <div className="px-8 py-4 border-t border-slate-100 flex items-center justify-between">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+              Page {pagination.page} of {pagination.totalPages} · {pagination.total} total items
+            </p>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={pagination.page <= 1 || loading}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+              >
+                <ChevronLeft size={16} />
+              </Button>
+              <span className="text-sm font-bold text-slate-600 min-w-[4rem] text-center">
+                {pagination.page} / {pagination.totalPages}
+              </span>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={pagination.page >= pagination.totalPages || loading}
+                onClick={() => setPage((p) => Math.min(pagination.totalPages, p + 1))}
+              >
+                <ChevronRight size={16} />
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
 
       <Modal isOpen={showModal} onClose={() => setShowModal(false)} title="Quantities Adjustment">

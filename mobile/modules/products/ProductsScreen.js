@@ -35,21 +35,41 @@ export default function ProductsScreen({ navigation, route }) {
     (async () => {
       const p = await getProductByBarcode(String(code));
       if (p?._id) {
-        dispatch(
-          addToCart({
-            productId: String(p._id),
-            name: p.name,
-            price: Number(p.price),
-          }),
-        );
+        const price = Number(p.price ?? 0);
+        const cost = p?.cost;
+        if (!(price > 0) || cost == null || cost === undefined || cost === '') {
+          alert(`${p.name} cannot be sold (missing price or cost)`);
+          navigation.setParams({ scannedCode: undefined });
+          return;
+        }
+        const stock = Number(p.stock ?? 0);
+        if (stock <= 0) {
+          alert(`${p.name} is out of stock`);
+        } else {
+          dispatch(
+            addToCart({
+              productId: String(p._id),
+              name: p.name,
+              price: Number(p.price),
+            }),
+          );
+        }
       }
       navigation.setParams({ scannedCode: undefined });
     })();
   }, [route?.params?.scannedCode, dispatch, navigation]);
 
   const filtered = React.useMemo(() => {
+    const price = (p) => Number(p?.price);
+    const cost = (p) => p?.cost;
+    let list = items.filter((p) => {
+      const pr = price(p);
+      const co = cost(p);
+      if (!(pr > 0)) return false;
+      if (co == null || co === undefined || co === '') return false;
+      return true;
+    });
     const q = query.trim().toLowerCase();
-    let list = items;
     if (!q) return list;
     return list.filter((p) => {
       const name = String(p.name || '').toLowerCase();
@@ -82,6 +102,7 @@ export default function ProductsScreen({ navigation, route }) {
             <ProductCard
               name={item.name}
               price={item.price}
+              outOfStock={Number(item.stock ?? 0) <= 0}
               onAdd={() =>
                 dispatch(
                   addToCart({

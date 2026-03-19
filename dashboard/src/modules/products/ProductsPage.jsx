@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Plus, Edit2, Trash2, Search, Download, Upload, Tags } from 'lucide-react';
+import { Plus, Edit2, Trash2, Search, Download, Upload, Tags, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Modal } from '../../components/ui/Modal';
@@ -8,6 +8,7 @@ import { Table, TableHead, TableBody, TableHeader, TableRow, TableCell } from '.
 import ImportProductsModal from '../../components/ImportProductsModal';
 
 const API = ''; // baseURL is configured globally (services/axios.config.js)
+const LIMIT = 25;
 
 const UNITS = ['Unit', 'Item', 'Kg', 'Gram', 'Litre', 'Piece', 'Pack', 'Box', 'Carton', 'Dozen'];
 const STOCK_TYPES = ['Defined', 'Unlimited', 'None'];
@@ -86,22 +87,32 @@ const ProductsManagement = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [search, setSearch] = useState('');
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({ page: 1, limit: LIMIT, total: 0, totalPages: 0 });
+  const [loading, setLoading] = useState(true);
   const [showProductModal, setShowProductModal] = useState(false);
   const [showCatModal, setShowCatModal] = useState(false);
   const [showImportModal, setShowImportModal] = useState(false);
   const [currentProduct, setCurrentProduct] = useState(emptyProduct);
 
-  useEffect(() => {
-    fetchProducts();
-    fetchCategories();
-  }, []);
-
-  const fetchProducts = async () => {
+  const fetchProducts = async (p = page, q = search) => {
     try {
-      const res = await axios.get(`${API}/products`);
-      setProducts(res.data.data || []);
-    } catch { setProducts([]); }
+      setLoading(true);
+      const res = await axios.get(`${API}/products`, {
+        params: { page: p, limit: LIMIT, search: q || undefined },
+      });
+      const d = res.data;
+      setProducts(d.data || []);
+      if (d.pagination) setPagination(d.pagination);
+    } catch { setProducts([]); } finally { setLoading(false); }
   };
+
+  useEffect(() => { setPage(1); }, [search]);
+  useEffect(() => {
+    const t = setTimeout(() => fetchProducts(page, search), search ? 300 : 0);
+    return () => clearTimeout(t);
+  }, [page, search]);
+  useEffect(() => { fetchCategories(); }, []);
 
   const fetchCategories = async () => {
     try {
@@ -145,18 +156,19 @@ const ProductsManagement = () => {
     }
   };
 
-  const filtered = products.filter(p =>
-    p.name.toLowerCase().includes(search.toLowerCase()) ||
-    (p.category || '').toLowerCase().includes(search.toLowerCase())
-  );
-
-  const handleExportCSV = () => {
+  const handleExportCSV = async () => {
+    try {
+      const res = await axios.get(`${API}/products`); // no page = all products
+      const allProducts = res.data?.data || [];
     const header = ['Name', 'Barcode', 'Category', 'Price', 'Cost', 'Stock', 'Unit'];
-    const rows = products.map(p => [p.name, p.barcode || '', p.category, p.price, p.cost, p.stock, p.unit]);
+    const rows = allProducts.map(p => [p.name, p.barcode || '', p.category, p.price, p.cost, p.stock, p.unit]);
     const csv = [header, ...rows].map(r => r.join(',')).join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href = url; a.download = 'products.csv'; a.click();
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'products.csv'; a.click();
+    } catch (e) {
+      alert('Export failed: ' + (e?.response?.data?.message || e?.message));
+    }
   };
 
   return (
@@ -214,7 +226,18 @@ const ProductsManagement = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {filtered.map(product => (
+          {loading ? (
+            <TableRow>
+              <TableCell colSpan={6} className="text-center py-12 text-slate-400">Loading…</TableCell>
+            </TableRow>
+          ) : products.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={6} className="text-center py-12 text-gray-400">
+                {search ? `No products match "${search}"` : 'No products yet. Click "Add Product" to get started.'}
+              </TableCell>
+            </TableRow>
+          ) : (
+            products.map(product => (
             <TableRow key={product._id} className="group hover:bg-slate-50/50 transition-colors">
               <TableCell className="font-bold text-text-main py-4">{product.name}</TableCell>
               <TableCell>
@@ -250,16 +273,39 @@ const ProductsManagement = () => {
                 </div>
               </TableCell>
             </TableRow>
-          ))}
-          {filtered.length === 0 && (
-            <TableRow>
-              <TableCell colSpan={6} className="text-center py-12 text-gray-400">
-                {search ? `No products match "${search}"` : 'No products yet. Click "Add New Product" to get started.'}
-              </TableCell>
-            </TableRow>
+            ))
           )}
         </TableBody>
       </Table>
+
+      {pagination.totalPages > 1 && (
+        <div className="mt-4 flex items-center justify-between px-2">
+          <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
+            Page {pagination.page} of {pagination.totalPages} · {pagination.total} total products
+          </p>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={pagination.page <= 1 || loading}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+            >
+              <ChevronLeft size={16} />
+            </Button>
+            <span className="text-sm font-bold text-slate-600 min-w-16 text-center">
+              {pagination.page} / {pagination.totalPages}
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={pagination.page >= pagination.totalPages || loading}
+              onClick={() => setPage((p) => Math.min(pagination.totalPages, p + 1))}
+            >
+              <ChevronRight size={16} />
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* ── Add / Edit Product Modal ── */}
       <Modal

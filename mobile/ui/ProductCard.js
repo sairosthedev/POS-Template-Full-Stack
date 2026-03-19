@@ -2,8 +2,9 @@ import React from 'react';
 import { View, Text, Pressable } from 'react-native';
 import { theme } from './theme';
 
-export function ProductCard({ name, price, onAdd }) {
+export function ProductCard({ name, price, onAdd, outOfStock = false }) {
   const initials = String(name || '?').trim().slice(0, 1).toUpperCase();
+  const disabled = outOfStock;
   return (
     <View
       style={{
@@ -29,21 +30,27 @@ export function ProductCard({ name, price, onAdd }) {
         <Text numberOfLines={1} style={{ fontWeight: '800', color: '#1C2B45' }}>
           {name}
         </Text>
+        {outOfStock && (
+          <Text style={{ fontSize: 10, fontWeight: '800', color: theme.colors.danger, marginTop: 4 }}>
+            Out of stock
+          </Text>
+        )}
         <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 6 }}>
           <Text style={{ fontWeight: '800', color: '#1C2B45' }}>${Number(price).toFixed(2)}</Text>
           <View style={{ flex: 1 }} />
           <Pressable
-            onPress={onAdd}
+            onPress={disabled ? undefined : onAdd}
+            disabled={disabled}
             style={({ pressed }) => ({
               width: 30,
               height: 30,
               borderRadius: 10,
               alignItems: 'center',
               justifyContent: 'center',
-              backgroundColor: theme.colors.gold,
-              opacity: pressed ? 0.9 : 1,
+              backgroundColor: disabled ? '#9CA3AF' : theme.colors.gold,
+              opacity: disabled ? 0.6 : pressed ? 0.9 : 1,
             })}>
-            <Text style={{ fontWeight: '900', color: '#1C2B45', fontSize: 18 }}>+</Text>
+            <Text style={{ fontWeight: '900', color: disabled ? '#6B7280' : '#1C2B45', fontSize: 18 }}>+</Text>
           </Pressable>
         </View>
       </View>
