@@ -1,9 +1,14 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { runSyncOnce } from '../services/sync';
+import { refreshProducts } from './productsSlice';
 
-export const syncNow = createAsyncThunk('sync/now', async (_, { rejectWithValue }) => {
+export const syncNow = createAsyncThunk('sync/now', async (_, { rejectWithValue, dispatch }) => {
   try {
-    return await runSyncOnce();
+    const result = await runSyncOnce();
+    if (result?.processed > 0) {
+      dispatch(refreshProducts());
+    }
+    return result;
   } catch (e) {
     const msg = e?.response?.data?.message || e?.message || 'Sync failed';
     return rejectWithValue(msg);

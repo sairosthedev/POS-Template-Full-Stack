@@ -5,11 +5,10 @@ const { protect, authorizeRoles } = require('../../middleware/auth');
 
 router.use(protect);
 
-// Inventory is admin/manager only
-router.get('/', authorizeRoles('Admin', 'Manager'), inventoryController.getInventory);
+router.get('/', authorizeRoles('Admin', 'Manager', 'Cashier'), inventoryController.getInventory);
 router.get('/logs', authorizeRoles('Admin', 'Manager'), inventoryController.getInventoryHistory);
 router.post('/adjust', authorizeRoles('Admin', 'Manager'), inventoryController.adjustStock);
-// Backwards compatible alias for clients
-router.post('/update', authorizeRoles('Admin', 'Manager'), inventoryController.adjustStock);
+router.post('/set', authorizeRoles('Admin', 'Manager'), inventoryController.setStock);
+router.post('/update', authorizeRoles('Admin', 'Manager'), inventoryController.setStock);
 
 module.exports = router;

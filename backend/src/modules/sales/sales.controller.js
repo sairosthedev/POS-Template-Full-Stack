@@ -1,9 +1,13 @@
 const Sale = require('./sales.model');
 const Product = require('../products/product.model');
+const User = require('../users/user.model');
+const InventoryLog = require('../inventory/inventory.model');
 const { successResponse, errorResponse } = require('../../utils/apiResponse');
 
 exports.createSale = async (req, res) => {
   const cashierId = req.user?.id;
+  const cashier = await User.findById(cashierId).select('branchId').lean();
+  const branchId = cashier?.branchId || null;
   const { items, paymentMethod, amountReceived, change } = req.body;
   if (!items || items.length === 0) return errorResponse(res, 'No items in sale', 400);
   if (!cashierId) return errorResponse(res, 'Not authorized', 401);
@@ -11,25 +15,46 @@ exports.createSale = async (req, res) => {
   try {
     let total = 0;
     const normalizedItems = [];
+    const productUpdates = [];
 
-    // Process items and adjust stock (server is source of truth for name/price)
+    // First pass: validate stock
     for (const item of items) {
       const qty = Number(item.quantity || 0);
       if (!item.productId || qty <= 0) continue;
       const product = await Product.findById(item.productId);
       if (product) {
-        const price = Number(item.price ?? product.price ?? 0);
-        total += price * qty;
-        product.stock -= qty;
-        await product.save();
-
-        normalizedItems.push({
-          productId: product._id,
-          name: product.name,
-          quantity: qty,
-          price,
-        });
+        const available = Number(product.stock ?? 0);
+        if (available < qty) {
+          return errorResponse(res, `Insufficient stock for "${product.name}". Available: ${available}`, 400);
+        }
+        productUpdates.push({ product, qty, item });
       }
+    }
+
+    // Second pass: deduct stock and build items
+    for (const { product, qty, item } of productUpdates) {
+      const price = Number(item.price ?? product.price ?? 0);
+      total += price * qty;
+      const previousStock = Number(product.stock ?? 0);
+      product.stock -= qty;
+      await product.save();
+
+      await InventoryLog.create({
+        productId: product._id,
+        changeType: 'Sale',
+        quantity: qty,
+        previousStock,
+        newStock: product.stock,
+        note: 'POS sale',
+        performedBy: cashierId,
+      });
+
+      normalizedItems.push({
+        productId: product._id,
+        name: product.name,
+        quantity: qty,
+        price,
+      });
     }
 
     if (normalizedItems.length === 0) return errorResponse(res, 'No valid items in sale', 400);
@@ -40,6 +65,7 @@ exports.createSale = async (req, res) => {
 
     const sale = new Sale({
       cashierId,
+      branchId,
       items: normalizedItems,
       paymentMethod: pmNormalized,
       total,

@@ -50,15 +50,13 @@ function MainTabs() {
           tabBarIcon: ({ color, size }) => <Ionicons name="grid-outline" size={size} color={color} />,
         }}
       />
-      {!isCashier ? (
-        <Tabs.Screen
-          name="Inventory"
-          component={InventoryScreen}
-          options={{
-            tabBarIcon: ({ color, size }) => <Ionicons name="cube-outline" size={size} color={color} />,
-          }}
-        />
-      ) : null}
+      <Tabs.Screen
+        name="Inventory"
+        component={InventoryScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => <Ionicons name="cube-outline" size={size} color={color} />,
+        }}
+      />
       {!isCashier ? (
         <Tabs.Screen
           name="Reports"

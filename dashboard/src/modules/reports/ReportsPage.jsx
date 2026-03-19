@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { Card } from '../../components/ui/Card';
-import { TrendingUp, DollarSign, ShoppingCart, Package } from 'lucide-react';
+import { TrendingUp, DollarSign, ShoppingCart, Package, Download } from 'lucide-react';
+import { Button } from '../../components/ui/Button';
 
 const API = ''; // baseURL is configured globally (services/axios.config.js)
 
@@ -72,13 +73,33 @@ const Reports = () => {
           <h1 className="text-2xl font-black text-text-main tracking-tight leading-none">Financial Intelligence</h1>
           <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mt-1.5">Comprehensive analysis of business performance</p>
         </div>
-        <div className="bg-white p-1 rounded-xl border border-slate-200 shadow-sm flex gap-1">
-          {['daily', 'weekly', 'monthly'].map(p => (
-            <button key={p} onClick={() => setPeriod(p)}
-              className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${period === p ? 'bg-primary text-white shadow-md shadow-primary/20' : 'text-slate-400 hover:text-text-main hover:bg-slate-50'}`}>
-              {p.charAt(0).toUpperCase() + p.slice(1)}
-            </button>
-          ))}
+        <div className="flex items-center gap-3">
+          <Button variant="outline" size="sm" className="gap-1.5" onClick={() => {
+            const header = ['Receipt', 'Date', 'Payment', 'Items', 'Total'];
+            const rows = sales.slice(0, 500).map(s => [
+              s.receiptNo || s._id,
+              new Date(s.createdAt).toISOString(),
+              s.paymentMethod || '',
+              s.items?.length || 0,
+              s.total,
+            ]);
+            const csv = [header, ...rows].map(r => r.join(',')).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `sales-export-${new Date().toISOString().slice(0, 10)}.csv`;
+            a.click();
+          }}>
+            <Download size={16} /> Export CSV
+          </Button>
+          <div className="bg-white p-1 rounded-xl border border-slate-200 shadow-sm flex gap-1">
+            {['daily', 'weekly', 'monthly'].map(p => (
+              <button key={p} onClick={() => setPeriod(p)}
+                className={`px-4 py-1.5 rounded-lg text-xs font-bold transition-all ${period === p ? 'bg-primary text-white shadow-md shadow-primary/20' : 'text-slate-400 hover:text-text-main hover:bg-slate-50'}`}>
+                {p.charAt(0).toUpperCase() + p.slice(1)}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 

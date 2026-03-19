@@ -20,6 +20,7 @@ export default function CartScreen({ navigation }) {
   const paymentMethod = useSelector((s) => s.cart.paymentMethod);
 
   const [amountReceived, setAmountReceived] = React.useState('');
+  const [submitting, setSubmitting] = React.useState(false);
 
   const receivedNumber = React.useMemo(() => {
     const n = Number(String(amountReceived).replace(/[^0-9.]/g, ''));
@@ -246,14 +247,17 @@ export default function CartScreen({ navigation }) {
         </View>
 
         <PrimaryButton
-          title="Complete sale"
+          title={submitting ? 'Processing…' : 'Complete sale'}
           tone="gold"
+          loading={submitting}
           disabled={
+            submitting ||
             items.length === 0 ||
             receivedNumber <= 0 ||
             (paymentMethod === 'cash' && receivedNumber < Number(total || 0))
           }
           onPress={async () => {
+            setSubmitting(true);
             const saleId =
               global.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random().toString(16).slice(2)}`;
             const createdAt = new Date().toISOString();
@@ -270,14 +274,21 @@ export default function CartScreen({ navigation }) {
               change: changeDue,
             };
 
-            // Prefer online-first: create the real sale immediately.
             let serverSale = null;
             try {
               const res = await api.post('/api/sales', payload);
               serverSale = res?.data?.data || res?.data;
-            } catch {
-              // Offline / API down: queue for later sync
+            } catch (err) {
+              const status = err?.response?.status;
+              const msg = err?.response?.data?.message || err?.message || 'Sale failed';
+              if (status >= 400 && status < 500) {
+                alert(msg);
+                setSubmitting(false);
+                return;
+              }
               await enqueueSync('sale:create', payload);
+            } finally {
+              setSubmitting(false);
             }
 
             const receiptId = serverSale?.receiptNo || serverSale?._id || saleId;

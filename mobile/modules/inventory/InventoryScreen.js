@@ -10,19 +10,13 @@ import { Card } from '../../ui/Card';
 import { PrimaryButton } from '../../ui/PrimaryButton';
 
 export default function InventoryScreen({ navigation }) {
-  const products = useSelector((s) => s.products.items);
-  const byId = React.useMemo(() => {
-    const map = new Map();
-    for (const p of products) map.set(String(p._id), p);
-    return map;
-  }, [products]);
-
+  const role = String(useSelector((s) => s.auth.user?.role || '')).toLowerCase();
+  const canEdit = role === 'admin' || role === 'manager';
   const [items, setItems] = React.useState([]);
   const [status, setStatus] = React.useState('idle');
   const [error, setError] = React.useState(null);
   const [query, setQuery] = React.useState('');
-
-  const [edit, setEdit] = React.useState(null); // { productId, branchId, quantity }
+  const [edit, setEdit] = React.useState(null); // { productId, stock }
 
   const load = React.useCallback(async () => {
     try {
@@ -46,12 +40,12 @@ export default function InventoryScreen({ navigation }) {
     const q = query.trim().toLowerCase();
     if (!q) return items;
     return items.filter((row) => {
-      const p = byId.get(String(row.productId));
-      const name = String(p?.name || '').toLowerCase();
-      const barcode = String(p?.barcode || '').toLowerCase();
-      return name.includes(q) || barcode.includes(q);
+      const name = String(row.name || '').toLowerCase();
+      const barcode = String(row.barcode || '').toLowerCase();
+      const cat = String(row.category || '').toLowerCase();
+      return name.includes(q) || barcode.includes(q) || cat.includes(q);
     });
-  }, [items, query, byId]);
+  }, [items, query]);
 
   async function saveUpdate() {
     if (!edit?.productId) return;
@@ -60,8 +54,7 @@ export default function InventoryScreen({ navigation }) {
       setError(null);
       await api.post('/api/inventory/update', {
         productId: edit.productId,
-        branchId: edit.branchId || null,
-        quantity: Number(edit.quantity),
+        stock: Number(edit.stock ?? 0),
       });
       setEdit(null);
       await load();
@@ -98,19 +91,19 @@ export default function InventoryScreen({ navigation }) {
 
         {error ? <Text style={{ color: theme.colors.danger, marginBottom: 10 }}>{String(error)}</Text> : null}
 
-        {edit ? (
+        {edit && canEdit ? (
           <Card style={{ marginBottom: 10 }}>
             <Text style={{ color: theme.colors.text, fontWeight: '900', marginBottom: 8 }}>
               Update stock
             </Text>
             <Text style={{ color: theme.colors.muted, marginBottom: 8 }}>
-              {byId.get(String(edit.productId))?.name || edit.productId}
+              {items.find((p) => String(p._id) === String(edit.productId))?.name || edit.productId}
             </Text>
             <TextInput
-              value={String(edit.quantity ?? '')}
-              onChangeText={(t) => setEdit({ ...edit, quantity: t })}
+              value={String(edit.stock ?? '')}
+              onChangeText={(t) => setEdit({ ...edit, stock: t })}
               keyboardType="numeric"
-              placeholder="Quantity"
+              placeholder="New stock quantity"
               placeholderTextColor="rgba(234, 240, 255, 0.45)"
               style={{
                 backgroundColor: theme.colors.surface,
@@ -133,40 +126,47 @@ export default function InventoryScreen({ navigation }) {
 
         <FlatList
           data={filtered}
-          keyExtractor={(row, idx) => String(row._id || `${row.productId}-${row.branchId}-${idx}`)}
+          keyExtractor={(row) => String(row._id)}
           ItemSeparatorComponent={() => <View style={{ height: 8 }} />}
           renderItem={({ item }) => {
-            const p = byId.get(String(item.productId));
+            const stock = Number(item.stock ?? 0);
+            const isOut = stock <= 0;
+            const isLow = !isOut && stock <= (item.stockAlert ?? 5);
             return (
               <Card>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   <View style={{ flex: 1 }}>
                     <Text style={{ color: theme.colors.text, fontWeight: '900' }}>
-                      {p?.name || String(item.productId)}
+                      {item.name}
                     </Text>
                     <Text style={{ color: theme.colors.muted, marginTop: 4 }}>
-                      Qty: {Number(item.quantity ?? 0)}
-                      {item.branchId ? ` • Branch: ${item.branchId}` : ''}
+                      Stock: {stock} {item.unit || 'units'}
+                      {(isOut || isLow) && (
+                        <Text style={{ color: theme.colors.danger, marginLeft: 8 }}>
+                          {isOut ? '(Out of stock)' : '(Low)'}
+                        </Text>
+                      )}
                     </Text>
                   </View>
-                  <Pressable
-                    onPress={() =>
-                      setEdit({
-                        productId: String(item.productId),
-                        branchId: item.branchId ? String(item.branchId) : null,
-                        quantity: String(item.quantity ?? 0),
-                      })
-                    }
-                    style={({ pressed }) => ({
-                      paddingVertical: 8,
-                      paddingHorizontal: 12,
-                      borderRadius: theme.radius.md,
-                      borderWidth: 1,
-                      borderColor: theme.colors.border,
-                      opacity: pressed ? 0.9 : 1,
-                    })}>
-                    <Text style={{ color: theme.colors.text, fontWeight: '900' }}>Edit</Text>
-                  </Pressable>
+                  {canEdit && (
+                    <Pressable
+                      onPress={() =>
+                        setEdit({
+                          productId: String(item._id),
+                          stock: String(stock),
+                        })
+                      }
+                      style={({ pressed }) => ({
+                        paddingVertical: 8,
+                        paddingHorizontal: 12,
+                        borderRadius: theme.radius.md,
+                        borderWidth: 1,
+                        borderColor: theme.colors.border,
+                        opacity: pressed ? 0.9 : 1,
+                      })}>
+                      <Text style={{ color: theme.colors.text, fontWeight: '900' }}>Edit</Text>
+                    </Pressable>
+                  )}
                 </View>
               </Card>
             );
