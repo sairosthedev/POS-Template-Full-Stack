@@ -27,13 +27,13 @@ npm run dev             # starts on http://localhost:5000
 
 ### Create the first admin account
 
-Either run the seed script:
+There is no public sign-up — run the seed script once:
 
 ```bash
 npm run seed:admin -- admin@example.com StrongPassword123 "Store Owner"
 ```
 
-or use the dashboard's **First-Time Setup** page (`/signup`), which only works while the database has no users. After the first account exists, all staff accounts are created from the dashboard's **People** page.
+All further staff accounts are created from the dashboard's **People** page.
 
 ## 2. Dashboard (back office)
 

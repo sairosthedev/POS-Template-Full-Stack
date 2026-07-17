@@ -228,7 +228,7 @@ Synced to backend API
 ### Authentication
 ```http
 POST /api/auth/login
-POST /api/auth/register
+POST /api/auth/pin-login
 ```
 
 ### Products

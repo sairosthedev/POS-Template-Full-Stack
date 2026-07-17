@@ -12,12 +12,15 @@ import { theme } from '../../ui/theme';
 import { HeaderBar } from '../../ui/HeaderBar';
 import { Keypad } from '../../ui/Keypad';
 import { api } from '../../services/api';
+import { getStoreSettings } from '../../services/settings';
+import { buildReceiptHtml, buildReceiptTextLines } from '../../services/receipt';
 
 export default function CartScreen({ navigation }) {
   const dispatch = useDispatch();
   const items = useSelector((s) => s.cart.items);
   const total = useSelector((s) => s.cart.total);
   const paymentMethod = useSelector((s) => s.cart.paymentMethod);
+  const cashierName = useSelector((s) => s.auth.user?.name || '');
 
   const [amountReceived, setAmountReceived] = React.useState('');
   const [submitting, setSubmitting] = React.useState(false);
@@ -38,47 +41,6 @@ export default function CartScreen({ navigation }) {
       setAmountReceived(String(Number(total || 0).toFixed(2)));
     }
   }, [paymentMethod, total, amountReceived]);
-
-  function buildReceiptHtml({ saleId, createdAt, paid, changeDue }) {
-    const rows = items
-      .map(
-        (i) =>
-          `<tr><td>${escapeHtml(i.name)}</td><td style="text-align:right;">${i.quantity}</td><td style="text-align:right;">$${(
-            Number(i.price) * Number(i.quantity)
-          ).toFixed(2)}</td></tr>`,
-      )
-      .join('');
-
-    return `<!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <style>
-      body { font-family: -apple-system, Segoe UI, Roboto, Arial; padding: 24px; }
-      h1 { margin: 0 0 6px; }
-      .muted { color: #667; font-size: 12px; }
-      table { width: 100%; border-collapse: collapse; margin-top: 16px; }
-      th, td { border-bottom: 1px solid #eee; padding: 8px 0; }
-      th { text-align: left; font-size: 12px; color: #667; }
-      .total { font-size: 18px; font-weight: 800; margin-top: 16px; text-align: right; }
-      .row { display:flex; justify-content:space-between; margin-top:8px; }
-    </style>
-  </head>
-  <body>
-    <h1>BELCIT TRADING</h1>
-    <div class="muted">Receipt: ${escapeHtml(saleId)} • ${escapeHtml(createdAt)}</div>
-    <div class="muted">Payment: ${escapeHtml(paymentMethod)}</div>
-    <table>
-      <thead><tr><th>Item</th><th style="text-align:right;">Qty</th><th style="text-align:right;">Amount</th></tr></thead>
-      <tbody>${rows}</tbody>
-    </table>
-    <div class="total">TOTAL: $${Number(total).toFixed(2)}</div>
-    <div class="row"><div class="muted">Paid</div><div><b>$${Number(paid).toFixed(2)}</b></div></div>
-    <div class="row"><div class="muted">Change</div><div><b>$${Number(changeDue).toFixed(2)}</b></div></div>
-    <div class="muted" style="margin-top: 14px;">Thank you</div>
-  </body>
-</html>`;
-  }
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.colors.bg }}>
@@ -295,25 +257,21 @@ export default function CartScreen({ navigation }) {
             }
 
             const receiptId = serverSale?.receiptNo || serverSale?._id || saleId;
-            const html = buildReceiptHtml({
-              saleId: receiptId,
+            // Store name/address/etc come from Back Office settings (cached for offline).
+            const store = await getStoreSettings();
+            const receiptData = {
+              store,
+              receiptNo: receiptId,
               createdAt: serverSale?.createdAt || createdAt,
+              cashierName,
+              paymentMethod,
+              items,
+              total,
               paid,
-              changeDue,
-            });
-            const textLines = [
-              'BELCIT TRADING',
-              `Receipt: ${receiptId}`,
-              `Payment: ${paymentMethod}`,
-              ...items.map(
-                (i) =>
-                  `${i.name}  x${i.quantity}  $${(Number(i.price) * Number(i.quantity)).toFixed(2)}`,
-              ),
-              `TOTAL: $${Number(total).toFixed(2)}`,
-              `PAID: $${Number(paid).toFixed(2)}`,
-              `CHANGE: $${Number(changeDue).toFixed(2)}`,
-              'Thank you',
-            ];
+              change: changeDue,
+            };
+            const html = buildReceiptHtml(receiptData);
+            const textLines = buildReceiptTextLines(receiptData);
             dispatch(clearCart());
             // Fire-and-forget sync (don't block UI)
             dispatch(syncNow());
@@ -321,6 +279,7 @@ export default function CartScreen({ navigation }) {
             navigation.replace('Receipt', {
               sale: serverSale || {
                 _id: receiptId,
+                items,
                 total,
                 paymentMethod,
                 createdAt,
@@ -331,6 +290,7 @@ export default function CartScreen({ navigation }) {
               },
               html,
               textLines,
+              store,
             });
           }}
         />
@@ -350,13 +310,4 @@ export default function CartScreen({ navigation }) {
       </Screen>
     </View>
   );
-}
-
-function escapeHtml(s) {
-  return String(s ?? '')
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#039;');
 }

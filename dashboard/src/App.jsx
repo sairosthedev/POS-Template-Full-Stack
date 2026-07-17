@@ -11,7 +11,6 @@ import ExpensesManagement from './modules/expenses/ExpensesPage';
 import SystemSettings from './modules/settings/SettingsPage';
 import Support from './modules/support/SupportPage';
 import Login from './modules/auth/Login';
-import Signup from './modules/auth/Signup';
 import { Splash } from './components/ui/Splash';
 import './index.css';
 
@@ -58,7 +57,6 @@ function App() {
       <Router>
         <Routes>
           <Route path="/login" element={<Login onLogin={handleLogin} />} />
-          <Route path="/signup" element={<Signup onLogin={handleLogin} />} />
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </Router>
@@ -73,7 +71,6 @@ function App() {
       <Router>
         <Routes>
           <Route path="/login" element={<Login onLogin={handleLogin} />} />
-          <Route path="/signup" element={<Signup onLogin={handleLogin} />} />
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </Router>

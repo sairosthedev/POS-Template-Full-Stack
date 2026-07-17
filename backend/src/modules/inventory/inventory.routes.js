@@ -7,6 +7,7 @@ router.use(protect);
 
 router.get('/', authorizeRoles('Admin', 'Manager', 'Cashier'), inventoryController.getInventory);
 router.get('/logs', authorizeRoles('Admin', 'Manager'), inventoryController.getInventoryHistory);
+router.get('/stats', authorizeRoles('Admin', 'Manager'), inventoryController.getInventoryStats);
 router.post('/adjust', authorizeRoles('Admin', 'Manager'), inventoryController.adjustStock);
 router.post('/set', authorizeRoles('Admin', 'Manager'), inventoryController.setStock);
 router.post('/update', authorizeRoles('Admin', 'Manager'), inventoryController.setStock);

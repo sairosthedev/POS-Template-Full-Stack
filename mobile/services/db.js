@@ -68,6 +68,11 @@ export async function initDb() {
       failedAt TEXT NOT NULL,
       reason TEXT
     );
+
+    CREATE TABLE IF NOT EXISTS kv (
+      key TEXT PRIMARY KEY NOT NULL,
+      value TEXT
+    );
   `);
 }
 
@@ -168,6 +173,20 @@ export async function markSyncQueueItemFailed(item, reason) {
     );
     await db.runAsync(`DELETE FROM sync_queue WHERE _id = ?`, [String(item._id)]);
   });
+}
+
+export async function getKV(key) {
+  const db = await getDb();
+  const rows = await db.getAllAsync(`SELECT value FROM kv WHERE key = ? LIMIT 1`, [String(key)]);
+  return rows?.[0]?.value ?? null;
+}
+
+export async function setKV(key, value) {
+  const db = await getDb();
+  await db.runAsync(
+    `INSERT INTO kv (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value=excluded.value`,
+    [String(key), value == null ? null : String(value)],
+  );
 }
 
 export async function getFailedSyncItems({ limit = 50 } = {}) {

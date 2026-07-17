@@ -109,8 +109,7 @@ const Login = ({ onLogin }) => {
 
         <div className="mt-8 pt-6 border-t border-slate-100 text-center">
           <p className="text-slate-400 text-xs font-medium">
-            Don't have an account? {' '}
-            <Link to="/signup" className="text-primary font-bold hover:underline">Sign Up</Link>
+            Accounts are created by your administrator
           </p>
         </div>
 
