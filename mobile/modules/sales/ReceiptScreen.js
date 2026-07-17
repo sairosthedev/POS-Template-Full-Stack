@@ -22,7 +22,7 @@ export default function ReceiptScreen({ navigation, route }) {
         <HeaderBar onBack={() => navigation.goBack()} rightIcon="receipt-outline" />
         <Screen>
           <Card>
-            <Text style={{ color: theme.colors.text, fontWeight: '900' }}>No receipt</Text>
+            <Text style={{ color: theme.colors.text, fontFamily: theme.fonts.extrabold }}>No receipt</Text>
           </Card>
         </Screen>
       </View>
@@ -38,33 +38,33 @@ export default function ReceiptScreen({ navigation, route }) {
         </Text>
         <Card style={{ marginBottom: 10 }}>
           <Text style={{ color: theme.colors.muted }}>Status</Text>
-          <Text style={{ color: theme.colors.text, fontWeight: '900' }}>{sale.status || 'Completed'}</Text>
+          <Text style={{ color: theme.colors.text, fontFamily: theme.fonts.extrabold }}>{sale.status || 'Completed'}</Text>
           <View style={{ height: 10 }} />
           <Text style={{ color: theme.colors.muted }}>Payment</Text>
-          <Text style={{ color: theme.colors.text, fontWeight: '900' }}>{String(sale.paymentMethod || '').toUpperCase()}</Text>
+          <Text style={{ color: theme.colors.text, fontFamily: theme.fonts.extrabold }}>{String(sale.paymentMethod || '').toUpperCase()}</Text>
           <View style={{ height: 10 }} />
           <Text style={{ color: theme.colors.muted }}>Receipt No</Text>
-          <Text style={{ color: theme.colors.text, fontWeight: '900' }}>{sale.receiptNo || sale._id}</Text>
+          <Text style={{ color: theme.colors.text, fontFamily: theme.fonts.extrabold }}>{sale.receiptNo || sale._id}</Text>
         </Card>
 
         <Card style={{ marginBottom: 10 }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text style={{ color: theme.colors.muted }}>Total</Text>
-            <Text style={{ color: theme.colors.gold, fontWeight: '900' }}>{money(sale.total)}</Text>
+            <Text style={{ color: theme.colors.accent, fontFamily: theme.fonts.extrabold }}>{money(sale.total)}</Text>
           </View>
           <View style={{ height: 8 }} />
           <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text style={{ color: theme.colors.muted }}>Paid</Text>
-            <Text style={{ color: theme.colors.text, fontWeight: '900' }}>{money(sale.amountReceived)}</Text>
+            <Text style={{ color: theme.colors.text, fontFamily: theme.fonts.extrabold }}>{money(sale.amountReceived)}</Text>
           </View>
           <View style={{ height: 8 }} />
           <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text style={{ color: theme.colors.muted }}>Change</Text>
-            <Text style={{ color: theme.colors.text, fontWeight: '900' }}>{money(sale.change)}</Text>
+            <Text style={{ color: theme.colors.text, fontFamily: theme.fonts.extrabold }}>{money(sale.change)}</Text>
           </View>
         </Card>
 
-        <PrimaryButton title="Print receipt" tone="gold" onPress={() => printReceipt({ html, textLines })} />
+        <PrimaryButton title="Print receipt" tone="accent" onPress={() => printReceipt({ html, textLines })} />
         <View style={{ height: 10 }} />
         <PrimaryButton title="Save / Send" onPress={() => printReceipt({ html })} />
         <View style={{ height: 10 }} />

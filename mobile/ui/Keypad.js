@@ -1,31 +1,39 @@
 import React from 'react';
 import { View, Text, Pressable } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import * as Haptics from 'expo-haptics';
 import { theme } from './theme';
 
-function Key({ label, onPress, tone = 'dark' }) {
-  const bg =
-    tone === 'gold'
-      ? theme.colors.gold
-      : tone === 'danger'
-        ? 'rgba(255, 77, 79, 0.12)'
-        : theme.colors.surface;
-  const color = tone === 'gold' ? '#1C2B45' : theme.colors.text;
-
+function Key({ label, icon, onPress, tone = 'default' }) {
   return (
     <Pressable
-      onPress={onPress}
+      onPress={() => {
+        Haptics.selectionAsync().catch(() => {});
+        onPress();
+      }}
       style={({ pressed }) => ({
         flex: 1,
-        height: 52,
-        borderRadius: theme.radius.md,
+        height: 64,
+        borderRadius: theme.radius.lg,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: bg,
-        borderWidth: 1,
-        borderColor: theme.colors.border,
-        opacity: pressed ? 0.9 : 1,
+        backgroundColor: pressed
+          ? 'rgba(240, 247, 238, 0.14)'
+          : tone === 'ghost'
+            ? 'transparent'
+            : theme.colors.surface,
       })}>
-      <Text style={{ color, fontWeight: '900', fontSize: 18 }}>{label}</Text>
+      {icon ? (
+        <Ionicons
+          name={icon}
+          size={22}
+          color={tone === 'danger' ? theme.colors.danger : theme.colors.muted}
+        />
+      ) : (
+        <Text style={{ color: theme.colors.text, fontFamily: theme.fonts.bold, fontSize: 24 }}>
+          {label}
+        </Text>
+      )}
     </Pressable>
   );
 }
@@ -33,36 +41,30 @@ function Key({ label, onPress, tone = 'dark' }) {
 export function Keypad({ value, onChange }) {
   const v = String(value ?? '');
 
-  const push = (ch) => {
-    const next = v + ch;
-    onChange(next);
-  };
+  const push = (ch) => onChange(v + ch);
   const back = () => onChange(v.slice(0, -1));
   const clear = () => onChange('');
 
+  const rows = [
+    ['1', '2', '3'],
+    ['4', '5', '6'],
+    ['7', '8', '9'],
+  ];
+
   return (
     <View style={{ gap: 10 }}>
+      {rows.map((row) => (
+        <View key={row[0]} style={{ flexDirection: 'row', gap: 10 }}>
+          {row.map((d) => (
+            <Key key={d} label={d} onPress={() => push(d)} />
+          ))}
+        </View>
+      ))}
       <View style={{ flexDirection: 'row', gap: 10 }}>
-        <Key label="1" onPress={() => push('1')} />
-        <Key label="2" onPress={() => push('2')} />
-        <Key label="3" onPress={() => push('3')} />
-      </View>
-      <View style={{ flexDirection: 'row', gap: 10 }}>
-        <Key label="4" onPress={() => push('4')} />
-        <Key label="5" onPress={() => push('5')} />
-        <Key label="6" onPress={() => push('6')} />
-      </View>
-      <View style={{ flexDirection: 'row', gap: 10 }}>
-        <Key label="7" onPress={() => push('7')} />
-        <Key label="8" onPress={() => push('8')} />
-        <Key label="9" onPress={() => push('9')} />
-      </View>
-      <View style={{ flexDirection: 'row', gap: 10 }}>
-        <Key label="C" tone="danger" onPress={clear} />
+        <Key icon="close-outline" tone="ghost" onPress={clear} />
         <Key label="0" onPress={() => push('0')} />
-        <Key label="⌫" onPress={back} />
+        <Key icon="backspace-outline" tone="ghost" onPress={back} />
       </View>
     </View>
   );
 }
-

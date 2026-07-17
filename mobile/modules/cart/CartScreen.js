@@ -65,7 +65,7 @@ export default function CartScreen({ navigation }) {
     </style>
   </head>
   <body>
-    <h1>MICCS STORE</h1>
+    <h1>BELCIT TRADING</h1>
     <div class="muted">Receipt: ${escapeHtml(saleId)} • ${escapeHtml(createdAt)}</div>
     <div class="muted">Payment: ${escapeHtml(paymentMethod)}</div>
     <table>
@@ -127,11 +127,11 @@ export default function CartScreen({ navigation }) {
                         paddingHorizontal: 12,
                         opacity: pressed ? 0.85 : 1,
                       })}>
-                      <Text style={{ color: theme.colors.text, fontWeight: '900', fontSize: 16 }}>−</Text>
+                      <Text style={{ color: theme.colors.text, fontFamily: theme.fonts.extrabold, fontSize: 16 }}>−</Text>
                     </Pressable>
                     <View style={{ width: 1, height: '100%', backgroundColor: theme.colors.border }} />
                     <View style={{ paddingVertical: 8, paddingHorizontal: 12, minWidth: 42, alignItems: 'center' }}>
-                      <Text style={{ color: theme.colors.text, fontWeight: '900' }}>{item.quantity}</Text>
+                      <Text style={{ color: theme.colors.text, fontFamily: theme.fonts.extrabold }}>{item.quantity}</Text>
                     </View>
                     <View style={{ width: 1, height: '100%', backgroundColor: theme.colors.border }} />
                     <Pressable
@@ -143,7 +143,7 @@ export default function CartScreen({ navigation }) {
                         paddingHorizontal: 12,
                         opacity: pressed ? 0.85 : 1,
                       })}>
-                      <Text style={{ color: theme.colors.text, fontWeight: '900', fontSize: 16 }}>+</Text>
+                      <Text style={{ color: theme.colors.text, fontFamily: theme.fonts.extrabold, fontSize: 16 }}>+</Text>
                     </Pressable>
                   </View>
 
@@ -160,7 +160,7 @@ export default function CartScreen({ navigation }) {
                       backgroundColor: 'rgba(255, 77, 79, 0.08)',
                       opacity: pressed ? 0.9 : 1,
                     })}>
-                    <Text style={{ color: theme.colors.danger, fontWeight: '900' }}>Remove</Text>
+                    <Text style={{ color: theme.colors.danger, fontFamily: theme.fonts.extrabold }}>Remove</Text>
                   </Pressable>
                 </View>
             </Card>
@@ -200,12 +200,12 @@ export default function CartScreen({ navigation }) {
                   borderRadius: theme.radius.md,
                   paddingVertical: 10,
                   alignItems: 'center',
-                  backgroundColor: active ? 'rgba(240, 193, 90, 0.16)' : theme.colors.surface,
+                  backgroundColor: active ? 'rgba(141, 198, 63, 0.16)' : theme.colors.surface,
                   borderWidth: 1,
-                  borderColor: active ? 'rgba(240, 193, 90, 0.55)' : theme.colors.border,
+                  borderColor: active ? 'rgba(141, 198, 63, 0.55)' : theme.colors.border,
                   opacity: pressed ? 0.9 : 1,
                 })}>
-                <Text style={{ color: active ? theme.colors.gold : theme.colors.text, fontWeight: '800' }}>
+                <Text style={{ color: active ? theme.colors.accent : theme.colors.text, fontFamily: theme.fonts.extrabold }}>
                   {p.label}
                 </Text>
               </Pressable>
@@ -226,7 +226,7 @@ export default function CartScreen({ navigation }) {
               paddingVertical: 12,
               paddingHorizontal: 14,
             }}>
-            <Text style={{ color: theme.colors.text, fontWeight: '900', fontSize: 22 }}>
+            <Text style={{ color: theme.colors.text, fontFamily: theme.fonts.extrabold, fontSize: 22 }}>
               ${amountReceived || '0'}
             </Text>
           </View>
@@ -234,7 +234,7 @@ export default function CartScreen({ navigation }) {
         <Keypad value={amountReceived} onChange={setAmountReceived} />
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 14 }}>
           <Text style={{ ...theme.text.h1, color: theme.colors.text }}>Total</Text>
-          <Text style={{ ...theme.text.h1, color: theme.colors.gold }}>
+          <Text style={{ ...theme.text.h1, color: theme.colors.accent }}>
             ${Number(total).toFixed(2)}
           </Text>
         </View>
@@ -248,7 +248,7 @@ export default function CartScreen({ navigation }) {
 
         <PrimaryButton
           title={submitting ? 'Processing…' : 'Complete sale'}
-          tone="gold"
+          tone="accent"
           loading={submitting}
           disabled={
             submitting ||
@@ -264,6 +264,9 @@ export default function CartScreen({ navigation }) {
             const paid = receivedNumber;
             const changeDue = paymentMethod === 'cash' ? change : 0;
             const payload = {
+              // Lets the backend deduplicate if this sale is posted again by the
+              // offline sync queue after a network failure.
+              clientSaleId: saleId,
               items: items.map((i) => ({
                 productId: i.productId,
                 quantity: i.quantity,
@@ -299,7 +302,7 @@ export default function CartScreen({ navigation }) {
               changeDue,
             });
             const textLines = [
-              'MICCS STORE',
+              'BELCIT TRADING',
               `Receipt: ${receiptId}`,
               `Payment: ${paymentMethod}`,
               ...items.map(

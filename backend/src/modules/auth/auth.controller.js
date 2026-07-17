@@ -21,13 +21,17 @@ exports.login = async (req, res) => {
     return errorResponse(res, error.message);
   }
 };
+// Bootstrap only: creates the first Admin when the database has no users yet.
+// After that, accounts are created by admins/managers via POST /api/users.
 exports.register = async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { name, email, password } = req.body;
   try {
-    const existingUser = await User.findOne({ email });
-    if (existingUser) return errorResponse(res, 'User already exists', 400);
+    const userCount = await User.estimatedDocumentCount();
+    if (userCount > 0) {
+      return errorResponse(res, 'Registration is disabled. Ask an administrator to create your account.', 403);
+    }
 
-    const user = new User({ name, email, password, role });
+    const user = new User({ name, email, password, role: 'Admin' });
     await user.save();
 
     const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1d' });

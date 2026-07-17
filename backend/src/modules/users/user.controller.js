@@ -1,6 +1,9 @@
 const User = require('./user.model');
 const { successResponse, errorResponse } = require('../../utils/apiResponse');
 
+const isAdmin = (req) => String(req.user?.role || '').toLowerCase() === 'admin';
+const targetsAdminRole = (role) => String(role || '').toLowerCase() === 'admin';
+
 exports.getAllUsers = async (req, res) => {
   try {
     const users = await User.find({}).select('-password').sort({ createdAt: -1 });
@@ -11,6 +14,9 @@ exports.getAllUsers = async (req, res) => {
 exports.createUser = async (req, res) => {
   try {
     const body = { ...req.body };
+    if (targetsAdminRole(body.role) && !isAdmin(req)) {
+      return errorResponse(res, 'Only an Admin can create Admin accounts', 403);
+    }
     // Accept "pin" from admin UI and store into pinHash for hashing hook
     if (body.pin) {
       body.pinHash = String(body.pin);
@@ -26,6 +32,13 @@ exports.createUser = async (req, res) => {
 exports.updateUser = async (req, res) => {
   try {
     const body = { ...req.body };
+    if (!isAdmin(req)) {
+      const target = await User.findById(req.params.id).select('role').lean();
+      if (!target) return errorResponse(res, 'User not found', 404);
+      if (targetsAdminRole(target.role) || targetsAdminRole(body.role)) {
+        return errorResponse(res, 'Only an Admin can manage Admin accounts', 403);
+      }
+    }
     if (body.pin) {
       // For updates, we need to trigger hashing hook, so use save()
       const u = await User.findById(req.params.id).select('+pinHash');
@@ -48,6 +61,11 @@ exports.updateUser = async (req, res) => {
 
 exports.deleteUser = async (req, res) => {
   try {
+    const target = await User.findById(req.params.id).select('role').lean();
+    if (!target) return errorResponse(res, 'User not found', 404);
+    if (targetsAdminRole(target.role) && !isAdmin(req)) {
+      return errorResponse(res, 'Only an Admin can manage Admin accounts', 403);
+    }
     await User.findByIdAndDelete(req.params.id);
     return successResponse(res, null, 'Employee deleted');
   } catch (error) { return errorResponse(res, error.message); }

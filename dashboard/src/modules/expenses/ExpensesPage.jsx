@@ -66,7 +66,7 @@ const ExpensesManagement = () => {
           <h1 className="text-2xl font-black text-text-main tracking-tight leading-none">Expense Control</h1>
           <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mt-1.5">Track and manage business operational costs</p>
         </div>
-        <Button onClick={() => setShowModal(true)} className="bg-primary hover:bg-blue-700 shadow-lg shadow-primary/20 gap-2 h-11 px-6 font-bold rounded-xl active:scale-95 transition-all">
+        <Button onClick={() => setShowModal(true)} className="bg-primary hover:bg-green-700 shadow-lg shadow-primary/20 gap-2 h-11 px-6 font-bold rounded-xl active:scale-95 transition-all">
           <Plus size={18} /> Add Record
         </Button>
       </div>
@@ -196,7 +196,7 @@ const ExpensesManagement = () => {
           </div>
           <div className="flex justify-end gap-3 pt-6 border-t border-slate-50">
             <Button type="button" variant="ghost" onClick={() => setShowModal(false)} className="font-bold text-slate-500">Discard Entry</Button>
-            <Button type="submit" disabled={loading} className="bg-primary hover:bg-blue-700 shadow-md shadow-primary/20 font-bold px-8">
+            <Button type="submit" disabled={loading} className="bg-primary hover:bg-green-700 shadow-md shadow-primary/20 font-bold px-8">
               {loading ? 'Processing...' : 'Save Record'}
             </Button>
           </div>

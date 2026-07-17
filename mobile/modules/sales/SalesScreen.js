@@ -26,7 +26,7 @@ export default function SalesScreen({ navigation }) {
           <Text style={{ ...theme.text.h1, color: theme.colors.text }}>Checkout</Text>
           <View style={{ flex: 1 }} />
           <Pressable onPress={() => dispatch(syncNow())} style={({ pressed }) => ({ opacity: pressed ? 0.85 : 1 })}>
-            <Text style={{ color: theme.colors.muted, fontWeight: '800' }}>
+            <Text style={{ color: theme.colors.muted, fontFamily: theme.fonts.extrabold }}>
               {syncStatus === 'loading' ? 'Syncing…' : 'Sync'}
             </Text>
           </Pressable>
@@ -60,12 +60,12 @@ export default function SalesScreen({ navigation }) {
                 alignItems: 'center',
               }}>
               <View style={{ width: 20, alignItems: 'center' }}>
-                <Text style={{ color: theme.colors.gold, fontWeight: '900' }}>×</Text>
+                <Text style={{ color: theme.colors.accent, fontFamily: theme.fonts.extrabold }}>×</Text>
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={{ color: theme.colors.text, fontWeight: '800' }}>{item.name}</Text>
+                <Text style={{ color: theme.colors.text, fontFamily: theme.fonts.extrabold }}>{item.name}</Text>
               </View>
-              <Text style={{ color: theme.colors.text, fontWeight: '900' }}>
+              <Text style={{ color: theme.colors.text, fontFamily: theme.fonts.extrabold }}>
                 ${Number(item.price * item.quantity).toFixed(2)}
               </Text>
             </View>
@@ -83,8 +83,8 @@ export default function SalesScreen({ navigation }) {
             padding: 14,
           }}>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 }}>
-            <Text style={{ color: theme.colors.muted, fontWeight: '700' }}>Total:</Text>
-            <Text style={{ color: theme.colors.gold, fontWeight: '900', fontSize: 20 }}>
+            <Text style={{ color: theme.colors.muted, fontFamily: theme.fonts.bold }}>Total:</Text>
+            <Text style={{ color: theme.colors.accent, fontFamily: theme.fonts.extrabold, fontSize: 20 }}>
               ${Number(total).toFixed(2)}
             </Text>
           </View>
@@ -105,12 +105,12 @@ export default function SalesScreen({ navigation }) {
                     borderRadius: theme.radius.md,
                     paddingVertical: 10,
                     alignItems: 'center',
-                    backgroundColor: active ? 'rgba(240, 193, 90, 0.16)' : theme.colors.surface,
+                    backgroundColor: active ? 'rgba(141, 198, 63, 0.16)' : theme.colors.surface,
                     borderWidth: 1,
-                    borderColor: active ? 'rgba(240, 193, 90, 0.55)' : theme.colors.border,
+                    borderColor: active ? 'rgba(141, 198, 63, 0.55)' : theme.colors.border,
                     opacity: pressed ? 0.9 : 1,
                   })}>
-                  <Text style={{ color: active ? theme.colors.gold : theme.colors.text, fontWeight: '800' }}>
+                  <Text style={{ color: active ? theme.colors.accent : theme.colors.text, fontFamily: theme.fonts.extrabold }}>
                     {p.label}
                   </Text>
                 </Pressable>
@@ -120,7 +120,7 @@ export default function SalesScreen({ navigation }) {
 
           <PrimaryButton title="Add items" onPress={() => navigation.navigate('Sell')} />
           <View style={{ height: 10 }} />
-          <PrimaryButton title="Complete Sale" tone="gold" onPress={() => navigation.navigate('Cart')} />
+          <PrimaryButton title="Complete Sale" tone="accent" onPress={() => navigation.navigate('Cart')} />
 
           {syncError ? (
             <Text style={{ color: theme.colors.danger, marginTop: 10 }}>{String(syncError)}</Text>

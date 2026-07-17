@@ -8,8 +8,8 @@ const Support = () => {
     {
       title: 'Email Support',
       desc: 'Send us a detailed message and we will get back to you within 24 hours.',
-      icon: <Mail className="text-blue-500" />,
-      contact: 'support@miccspos.co.zw',
+      icon: <Mail className="text-green-500" />,
+      contact: 'support@belcit.co.zw',
       action: 'Send Email'
     },
     {
@@ -39,7 +39,7 @@ const Support = () => {
     <div className="w-full max-w-6xl mx-auto">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-800 mb-2">Help & Support</h1>
-        <p className="text-gray-500">Need help with Miccs POS? We're here to assist you.</p>
+        <p className="text-gray-500">Need help with Belcit POS? We're here to assist you.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
@@ -82,10 +82,10 @@ const Support = () => {
               <BookOpen size={20} />
               <h2 className="text-lg font-bold">User Guide</h2>
             </div>
-            <p className="text-sm text-blue-100 mb-6">
-              Download our comprehensive User Manual to learn every feature of the Miccs POS system.
+            <p className="text-sm text-green-100 mb-6">
+              Download our comprehensive User Manual to learn every feature of the Belcit POS system.
             </p>
-            <Button className="w-full bg-white text-[#1c3eb2] hover:bg-blue-50 border-0">
+            <Button className="w-full bg-white text-[#1c3eb2] hover:bg-green-50 border-0">
               <ExternalLink size={16} className="mr-2" /> Download Manual
             </Button>
           </Card>

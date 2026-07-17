@@ -21,7 +21,7 @@ export default function ScanScreen({ navigation }) {
       {!permission?.granted ? (
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 16 }}>
           <Ionicons name="camera-outline" size={38} color={theme.colors.muted} />
-          <Text style={{ color: theme.colors.text, fontWeight: '800', fontSize: 18, marginTop: 12 }}>
+          <Text style={{ color: theme.colors.text, fontFamily: theme.fonts.extrabold, fontSize: 18, marginTop: 12 }}>
             Camera permission needed
           </Text>
           <Text style={{ color: theme.colors.muted, textAlign: 'center', marginTop: 8 }}>
@@ -31,13 +31,13 @@ export default function ScanScreen({ navigation }) {
           <Pressable
             onPress={requestPermission}
             style={({ pressed }) => ({
-              backgroundColor: theme.colors.gold,
+              backgroundColor: theme.colors.accent,
               borderRadius: theme.radius.md,
               paddingVertical: 12,
               paddingHorizontal: 16,
               opacity: pressed ? 0.9 : 1,
             })}>
-            <Text style={{ fontWeight: '900', color: '#1C2B45' }}>Grant permission</Text>
+            <Text style={{ fontFamily: theme.fonts.extrabold, color: '#0E2413' }}>Grant permission</Text>
           </Pressable>
         </View>
       ) : (
@@ -77,12 +77,12 @@ export default function ScanScreen({ navigation }) {
                 height: 220,
                 borderRadius: 18,
                 borderWidth: 2,
-                borderColor: 'rgba(240, 193, 90, 0.65)',
+                borderColor: 'rgba(141, 198, 63, 0.65)',
                 backgroundColor: 'rgba(0,0,0,0.15)',
               }}
             />
             <View style={{ height: 14 }} />
-            <Text style={{ color: theme.colors.text, fontWeight: '800' }}>
+            <Text style={{ color: theme.colors.text, fontFamily: theme.fonts.extrabold }}>
               Scan the product barcode to add to cart
             </Text>
           </View>

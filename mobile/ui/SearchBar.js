@@ -22,7 +22,7 @@ export function SearchBar({ value, onChangeText, placeholder = 'Search product' 
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
-        placeholderTextColor="rgba(234, 240, 255, 0.45)"
+        placeholderTextColor="rgba(240, 247, 238, 0.45)"
         style={{ flex: 1, color: theme.colors.text }}
       />
       <Ionicons name="barcode-outline" size={20} color={theme.colors.muted} />

@@ -215,7 +215,7 @@ const ImportProductsModal = ({ isOpen, onClose, onImported }) => {
             onDrop={handleDrop}
             onDragOver={e => e.preventDefault()}
             onClick={() => fileRef.current.click()}
-            className="border-2 border-dashed border-gray-300 rounded-xl p-10 text-center cursor-pointer hover:border-[#1c3eb2] hover:bg-blue-50 transition-colors"
+            className="border-2 border-dashed border-gray-300 rounded-xl p-10 text-center cursor-pointer hover:border-[#1c3eb2] hover:bg-green-50 transition-colors"
           >
             <Upload size={40} className="mx-auto text-gray-400 mb-3" />
             <p className="text-base font-medium text-gray-600">Drag & drop a file here or click to browse</p>
@@ -226,7 +226,7 @@ const ImportProductsModal = ({ isOpen, onClose, onImported }) => {
           <div className="flex gap-4 mt-5 text-xs text-gray-500">
             <div className="flex items-center gap-1.5"><FileSpreadsheet size={16} className="text-green-500" />Excel / CSV</div>
             <div className="flex items-center gap-1.5"><FileType size={16} className="text-red-500" />PDF (text-based)</div>
-            <div className="flex items-center gap-1.5"><FileText size={16} className="text-blue-400" />Any tabular format</div>
+            <div className="flex items-center gap-1.5"><FileText size={16} className="text-green-400" />Any tabular format</div>
           </div>
           {error && <p className="text-sm text-red-500 mt-3 font-medium">{error}</p>}
         </div>

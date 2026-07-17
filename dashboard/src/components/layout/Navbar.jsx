@@ -21,7 +21,7 @@ const TopNavbar = ({ onLogout, user }) => {
         </div>
 
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="sm" className="text-slate-400 hover:text-primary hover:bg-blue-50/50">
+          <Button variant="ghost" size="sm" className="text-slate-400 hover:text-primary hover:bg-green-50/50">
             <RefreshCw size={20} />
           </Button>
           <Button 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Spinner } from '../../components/ui/Spinner';
 import axios from 'axios';
 import { Edit2, AlertTriangle, Archive, Layers, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
@@ -135,7 +136,7 @@ const InventoryManagement = () => {
             <tbody className="divide-y divide-slate-50">
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="px-8 py-20 text-center text-slate-400 font-medium">Loading…</td>
+                  <td colSpan={7} className="px-8 py-20"><div className="flex flex-col items-center gap-3 text-slate-400 font-medium"><Spinner size="lg" /><span>Loading inventory…</span></div></td>
                 </tr>
               ) : products.length === 0 ? (
                 <tr>
@@ -154,7 +155,7 @@ const InventoryManagement = () => {
                         <p className="text-[10px] text-slate-400 font-bold uppercase tracking-tight mt-0.5">#{p._id.slice(-6).toUpperCase()}</p>
                       </td>
                       <td className="px-8 py-5 text-center">
-                        <span className="px-2.5 py-1 rounded-lg bg-blue-50 text-primary text-[10px] font-black uppercase tracking-wider border border-blue-100/50">
+                        <span className="px-2.5 py-1 rounded-lg bg-green-50 text-primary text-[10px] font-black uppercase tracking-wider border border-green-100/50">
                           {p.category}
                         </span>
                       </td>
@@ -248,7 +249,7 @@ const InventoryManagement = () => {
 
           <div className="flex justify-end gap-3 pt-4 border-t border-slate-50">
             <Button type="button" variant="ghost" onClick={() => setShowModal(false)} className="font-bold text-slate-400 uppercase tracking-widest text-[10px]">Abandon</Button>
-            <Button type="submit" className="bg-primary hover:bg-blue-700 shadow-xl shadow-primary/20 px-8 font-black uppercase tracking-widest text-[10px]">Override Quantities</Button>
+            <Button type="submit" className="bg-primary hover:bg-green-700 shadow-xl shadow-primary/20 px-8 font-black uppercase tracking-widest text-[10px]">Override Quantities</Button>
           </div>
         </form>
       </Modal>

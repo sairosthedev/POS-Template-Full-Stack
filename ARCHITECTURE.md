@@ -1,8 +1,8 @@
-# Miccs POS System
+# Belcit POS System
 
 ## Technical Architecture Documentation
 
-**System Name:** Miccs POS  
+**System Name:** Belcit POS  
 **Platform:** Android POS + Web Back Office  
 **Company:** Miccs Technologies  
 **Author:** Macdonald Sairos  
@@ -11,7 +11,7 @@
 
 # 1. System Overview
 
-Miccs POS is a **cloud-based Point of Sale system** designed for retail businesses.
+Belcit POS is a **cloud-based Point of Sale system** designed for retail businesses.
 The system allows businesses to manage **sales, inventory, products, and reports** through a **mobile POS application and a web-based back-office dashboard**.
 
 The POS application will run on:
@@ -260,7 +260,7 @@ The POS will integrate with the **Sunmi Printer SDK**.
 
 ### Example Receipt
 ```
-MICCS STORE
+BELCIT TRADING
 Harare
 
 Bread       $1

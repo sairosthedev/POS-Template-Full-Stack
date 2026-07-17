@@ -7,7 +7,7 @@ const BigStatCard = ({ title, value, type, trend }) => {
     gross: {
       color: 'primary',
       icon: <TrendingUp size={20} />,
-      bg: 'bg-blue-50',
+      bg: 'bg-green-50',
       text: 'text-primary'
     },
     net: {
@@ -19,7 +19,7 @@ const BigStatCard = ({ title, value, type, trend }) => {
     products: {
       color: 'info',
       icon: <PackageOpen size={20} />,
-      bg: 'bg-sky-50',
+      bg: 'bg-green-50',
       text: 'text-info'
     },
     cost: {

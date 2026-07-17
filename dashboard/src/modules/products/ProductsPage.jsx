@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Spinner } from '../../components/ui/Spinner';
 import axios from 'axios';
 import { Plus, Edit2, Trash2, Search, Download, Upload, Tags, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
@@ -59,7 +60,7 @@ const CategoriesModal = ({ isOpen, onClose }) => {
           onChange={e => setNewName(e.target.value)}
           required
         />
-        <Button type="submit" size="md" className="bg-primary hover:bg-blue-700 shadow-sm shadow-primary/20 font-bold"><Plus size={16} className="mr-1" />Add</Button>
+        <Button type="submit" size="md" className="bg-primary hover:bg-green-700 shadow-sm shadow-primary/20 font-bold"><Plus size={16} className="mr-1" />Add</Button>
       </form>
 
       <div className="divide-y divide-slate-100 rounded-xl border border-slate-200 overflow-hidden">
@@ -194,12 +195,12 @@ const ProductsManagement = () => {
         </div>
 
         <div className="flex flex-wrap gap-3">
-          <Button onClick={openAdd} className="bg-primary hover:bg-blue-700 shadow-lg shadow-primary/20 gap-2 h-11 px-6 font-bold rounded-xl active:scale-95 transition-all">
+          <Button onClick={openAdd} className="bg-primary hover:bg-green-700 shadow-lg shadow-primary/20 gap-2 h-11 px-6 font-bold rounded-xl active:scale-95 transition-all">
             <Plus size={18} /> Add Product
           </Button>
           <Button
             variant="outline"
-            className="gap-2 border-indigo-500/20 text-indigo-600 hover:bg-indigo-50 h-11 px-4 font-bold rounded-xl"
+            className="gap-2 border-emerald-500/20 text-emerald-600 hover:bg-emerald-50 h-11 px-4 font-bold rounded-xl"
             onClick={() => { setShowCatModal(true); fetchCategories(); }}
           >
             <Tags size={18} /> Categories
@@ -228,7 +229,7 @@ const ProductsManagement = () => {
         <TableBody>
           {loading ? (
             <TableRow>
-              <TableCell colSpan={6} className="text-center py-12 text-slate-400">Loading…</TableCell>
+              <TableCell colSpan={6} className="text-center py-12"><div className="flex flex-col items-center gap-3 text-slate-400"><Spinner size="lg" /><span>Loading products…</span></div></TableCell>
             </TableRow>
           ) : products.length === 0 ? (
             <TableRow>
@@ -241,7 +242,7 @@ const ProductsManagement = () => {
             <TableRow key={product._id} className="group hover:bg-slate-50/50 transition-colors">
               <TableCell className="font-bold text-text-main py-4">{product.name}</TableCell>
               <TableCell>
-                <span className="px-2.5 py-1 rounded-lg bg-blue-50 text-primary text-[11px] font-black uppercase tracking-wider border border-blue-100/50">
+                <span className="px-2.5 py-1 rounded-lg bg-green-50 text-primary text-[11px] font-black uppercase tracking-wider border border-green-100/50">
                   {product.category}
                 </span>
               </TableCell>

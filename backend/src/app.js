@@ -13,7 +13,7 @@ app.use('/api', routes);
 
 // Health check
 app.get('/', (req, res) => {
-  res.json({ message: 'Miccs POS API is running...' });
+  res.json({ message: 'Belcit POS API is running...' });
 });
 
 // Error handling middleware

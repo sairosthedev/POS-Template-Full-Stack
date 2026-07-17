@@ -5,19 +5,24 @@ import { theme } from './theme';
 export function PinDots({ length = 4, value = '' }) {
   const v = String(value || '');
   return (
-    <View style={{ flexDirection: 'row', gap: 10, justifyContent: 'center' }}>
+    <View style={{ flexDirection: 'row', gap: 14, justifyContent: 'center' }}>
       {Array.from({ length }).map((_, i) => {
         const filled = i < v.length;
         return (
           <View
             key={i}
             style={{
-              width: 14,
-              height: 14,
-              borderRadius: 999,
-              backgroundColor: filled ? theme.colors.gold : 'rgba(234, 240, 255, 0.20)',
-              borderWidth: 1,
-              borderColor: theme.colors.border,
+              width: 16,
+              height: 16,
+              borderRadius: 8,
+              backgroundColor: filled ? theme.colors.accent : 'transparent',
+              borderWidth: filled ? 0 : 1.5,
+              borderColor: 'rgba(240, 247, 238, 0.25)',
+              shadowColor: theme.colors.accent,
+              shadowOpacity: filled ? 0.6 : 0,
+              shadowRadius: 8,
+              shadowOffset: { width: 0, height: 0 },
+              elevation: filled ? 4 : 0,
             }}
           />
         );
@@ -25,4 +30,3 @@ export function PinDots({ length = 4, value = '' }) {
     </View>
   );
 }
-

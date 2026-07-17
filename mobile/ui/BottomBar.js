@@ -5,12 +5,12 @@ import { theme } from './theme';
 
 function Action({ icon, label, onPress, tone = 'dark' }) {
   const bg =
-    tone === 'gold'
-      ? theme.colors.gold
+    tone === 'accent'
+      ? theme.colors.accent
       : tone === 'danger'
         ? theme.colors.danger
         : 'rgba(13, 33, 63, 0.9)';
-  const textColor = tone === 'gold' ? '#1C2B45' : '#fff';
+  const textColor = tone === 'accent' ? '#0E2413' : '#fff';
   return (
     <Pressable
       onPress={onPress}
@@ -28,7 +28,7 @@ function Action({ icon, label, onPress, tone = 'dark' }) {
         borderColor: theme.colors.border,
       })}>
       <Ionicons name={icon} size={18} color={textColor} />
-      <Text style={{ color: textColor, fontWeight: '800' }}>{label}</Text>
+      <Text style={{ color: textColor, fontFamily: theme.fonts.extrabold }}>{label}</Text>
     </Pressable>
   );
 }
@@ -45,7 +45,7 @@ export function BottomBar({ onScan, onHold, onCancel }) {
         borderTopColor: theme.colors.border,
       }}>
       <Action icon="barcode-outline" label="Scan" onPress={onScan} />
-      <Action icon="pause-outline" label="Hold" onPress={onHold} tone="gold" />
+      <Action icon="pause-outline" label="Hold" onPress={onHold} tone="accent" />
       <Action icon="close-outline" label="Cancel" onPress={onCancel} />
     </View>
   );

@@ -171,7 +171,7 @@ const SystemSettings = () => {
           <Button 
             type="submit" 
             disabled={loading} 
-            className="px-10 py-7 bg-primary hover:bg-blue-700 shadow-2xl shadow-primary/30 font-black uppercase tracking-widest text-[11px] rounded-2xl active:scale-95 transition-all"
+            className="px-10 py-7 bg-primary hover:bg-green-700 shadow-2xl shadow-primary/30 font-black uppercase tracking-widest text-[11px] rounded-2xl active:scale-95 transition-all"
           >
             {loading ? <span className="flex items-center gap-2 italic">Processing Updates...</span> : (
               <span className="flex items-center gap-3">

@@ -95,7 +95,7 @@ const DashboardHome = () => {
               </div>
               <div className="h-full flex flex-col items-center justify-center text-slate-300 gap-3 italic">
                 <TrendingUp size={48} className="opacity-20" />
-                <p>Advanced Sales Analytics Loading...</p>
+                <p>Sales trend visualization coming soon</p>
               </div>
             </Card>
             <Card className="min-h-[300px]">

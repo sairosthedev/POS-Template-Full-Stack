@@ -52,7 +52,7 @@ const StoreManagement = () => {
           <h1 className="text-2xl font-black text-text-main tracking-tight leading-none">Branch Network</h1>
           <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mt-1.5">Manage your retail outlets and locations</p>
         </div>
-        <Button onClick={() => { setCurrent(empty); setShowModal(true); }} className="bg-primary hover:bg-blue-700 shadow-lg shadow-primary/20 gap-2 h-11 px-6 font-bold rounded-xl active:scale-95 transition-all">
+        <Button onClick={() => { setCurrent(empty); setShowModal(true); }} className="bg-primary hover:bg-green-700 shadow-lg shadow-primary/20 gap-2 h-11 px-6 font-bold rounded-xl active:scale-95 transition-all">
           <Plus size={18} /> Register Branch
         </Button>
       </div>
@@ -70,7 +70,7 @@ const StoreManagement = () => {
           {branches.map(b => (
             <Card key={b._id} className="group hover:border-primary/20 transition-all duration-300 shadow-xl shadow-slate-200/50">
               <div className="flex items-start justify-between mb-5">
-                <div className="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300">
+                <div className="w-12 h-12 rounded-2xl bg-green-50 border border-green-100 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300">
                   <Store size={24} />
                 </div>
                 <span className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest border ${
@@ -124,7 +124,7 @@ const StoreManagement = () => {
           </div>
           <div className="flex justify-end gap-3 pt-6 border-t border-slate-100">
             <Button type="button" variant="ghost" onClick={() => setShowModal(false)} className="font-bold text-slate-500">Cancel</Button>
-            <Button type="submit" className="bg-primary hover:bg-blue-700 shadow-md shadow-primary/20 font-bold px-8">Save config</Button>
+            <Button type="submit" className="bg-primary hover:bg-green-700 shadow-md shadow-primary/20 font-bold px-8">Save config</Button>
           </div>
         </form>
       </Modal>

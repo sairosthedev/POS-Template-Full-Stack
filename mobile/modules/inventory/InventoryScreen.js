@@ -76,7 +76,7 @@ export default function InventoryScreen({ navigation }) {
           value={query}
           onChangeText={setQuery}
           placeholder="Search product / barcode"
-          placeholderTextColor="rgba(234, 240, 255, 0.45)"
+          placeholderTextColor="rgba(240, 247, 238, 0.45)"
           style={{
             backgroundColor: theme.colors.surface,
             borderWidth: 1,
@@ -93,7 +93,7 @@ export default function InventoryScreen({ navigation }) {
 
         {edit && canEdit ? (
           <Card style={{ marginBottom: 10 }}>
-            <Text style={{ color: theme.colors.text, fontWeight: '900', marginBottom: 8 }}>
+            <Text style={{ color: theme.colors.text, fontFamily: theme.fonts.extrabold, marginBottom: 8 }}>
               Update stock
             </Text>
             <Text style={{ color: theme.colors.muted, marginBottom: 8 }}>
@@ -104,7 +104,7 @@ export default function InventoryScreen({ navigation }) {
               onChangeText={(t) => setEdit({ ...edit, stock: t })}
               keyboardType="numeric"
               placeholder="New stock quantity"
-              placeholderTextColor="rgba(234, 240, 255, 0.45)"
+              placeholderTextColor="rgba(240, 247, 238, 0.45)"
               style={{
                 backgroundColor: theme.colors.surface,
                 borderWidth: 1,
@@ -136,7 +136,7 @@ export default function InventoryScreen({ navigation }) {
               <Card>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   <View style={{ flex: 1 }}>
-                    <Text style={{ color: theme.colors.text, fontWeight: '900' }}>
+                    <Text style={{ color: theme.colors.text, fontFamily: theme.fonts.extrabold }}>
                       {item.name}
                     </Text>
                     <Text style={{ color: theme.colors.muted, marginTop: 4 }}>
@@ -164,7 +164,7 @@ export default function InventoryScreen({ navigation }) {
                         borderColor: theme.colors.border,
                         opacity: pressed ? 0.9 : 1,
                       })}>
-                      <Text style={{ color: theme.colors.text, fontWeight: '900' }}>Edit</Text>
+                      <Text style={{ color: theme.colors.text, fontFamily: theme.fonts.extrabold }}>Edit</Text>
                     </Pressable>
                   )}
                 </View>

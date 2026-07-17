@@ -6,28 +6,36 @@ export function PrimaryButton({ title, onPress, disabled, loading, tone = 'prima
   const bg =
     tone === 'danger'
       ? theme.colors.danger
-      : tone === 'gold'
-        ? theme.colors.gold
+      : tone === 'accent'
+        ? theme.colors.accent
         : theme.colors.primary;
-  const textColor = tone === 'gold' ? '#1C2B45' : '#fff';
+  const textColor = tone === 'accent' ? '#0E2413' : '#fff';
+
   return (
     <Pressable
       onPress={onPress}
       disabled={disabled || loading}
       style={({ pressed }) => ({
         backgroundColor: bg,
-        opacity: disabled || loading ? 0.55 : pressed ? 0.9 : 1,
-        borderRadius: theme.radius.md,
-        paddingVertical: 12,
-        paddingHorizontal: 14,
+        opacity: disabled || loading ? 0.45 : 1,
+        transform: [{ scale: pressed ? 0.98 : 1 }],
+        borderRadius: 16,
+        height: 54,
+        paddingHorizontal: 18,
         alignItems: 'center',
         flexDirection: 'row',
         justifyContent: 'center',
         gap: 10,
+        shadowColor: bg,
+        shadowOpacity: 0.35,
+        shadowRadius: 12,
+        shadowOffset: { width: 0, height: 6 },
+        elevation: 6,
       })}>
       {loading ? <ActivityIndicator color={textColor} /> : null}
-      <Text style={{ color: textColor, fontSize: 15, fontWeight: '800' }}>{title}</Text>
+      <Text style={{ color: textColor, fontSize: 16, fontFamily: theme.fonts.bold, letterSpacing: 0.2 }}>
+        {title}
+      </Text>
     </Pressable>
   );
 }
-

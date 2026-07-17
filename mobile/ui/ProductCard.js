@@ -22,21 +22,21 @@ export function ProductCard({ name, price, onAdd, outOfStock = false }) {
           justifyContent: 'center',
           backgroundColor: 'rgba(7, 18, 37, 0.08)',
         }}>
-        <Text style={{ fontSize: 34, fontWeight: '900', color: 'rgba(7,18,37,0.55)' }}>
+        <Text style={{ fontSize: 34, fontFamily: theme.fonts.extrabold, color: 'rgba(7,18,37,0.55)' }}>
           {initials}
         </Text>
       </View>
       <View style={{ padding: 10 }}>
-        <Text numberOfLines={1} style={{ fontWeight: '800', color: '#1C2B45' }}>
+        <Text numberOfLines={1} style={{ fontFamily: theme.fonts.extrabold, color: '#0E2413' }}>
           {name}
         </Text>
         {outOfStock && (
-          <Text style={{ fontSize: 10, fontWeight: '800', color: theme.colors.danger, marginTop: 4 }}>
+          <Text style={{ fontSize: 10, fontFamily: theme.fonts.extrabold, color: theme.colors.danger, marginTop: 4 }}>
             Out of stock
           </Text>
         )}
         <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 6 }}>
-          <Text style={{ fontWeight: '800', color: '#1C2B45' }}>${Number(price).toFixed(2)}</Text>
+          <Text style={{ fontFamily: theme.fonts.extrabold, color: '#0E2413' }}>${Number(price).toFixed(2)}</Text>
           <View style={{ flex: 1 }} />
           <Pressable
             onPress={disabled ? undefined : onAdd}
@@ -47,10 +47,10 @@ export function ProductCard({ name, price, onAdd, outOfStock = false }) {
               borderRadius: 10,
               alignItems: 'center',
               justifyContent: 'center',
-              backgroundColor: disabled ? '#9CA3AF' : theme.colors.gold,
+              backgroundColor: disabled ? '#9CA3AF' : theme.colors.accent,
               opacity: disabled ? 0.6 : pressed ? 0.9 : 1,
             })}>
-            <Text style={{ fontWeight: '900', color: disabled ? '#6B7280' : '#1C2B45', fontSize: 18 }}>+</Text>
+            <Text style={{ fontFamily: theme.fonts.extrabold, color: disabled ? '#6B7280' : '#0E2413', fontSize: 18 }}>+</Text>
           </Pressable>
         </View>
       </View>

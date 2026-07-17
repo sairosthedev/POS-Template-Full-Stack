@@ -1,27 +1,44 @@
 import React from 'react';
+import { Spinner } from './Spinner';
 
-export const Button = ({ children, variant = 'primary', size = 'md', className = '', ...props }) => {
-  const baseStyle = 'inline-flex items-center justify-center rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2';
-  
-  const variants = {
-    primary: 'bg-[#1c3eb2] text-white hover:bg-blue-800 focus:ring-[#1c3eb2]',
-    outline: 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-gray-300',
-    danger: 'bg-red-600 text-white hover:bg-red-700 focus:ring-red-600',
-    ghost: 'bg-transparent text-gray-600 hover:bg-gray-100 hover:text-gray-900',
-  };
-
-  const sizes = {
-    sm: 'px-3 py-1.5 text-sm',
-    md: 'px-4 py-2 text-sm',
-    lg: 'px-6 py-3 text-base',
-    icon: 'p-2',
-  };
-
-  const classes = `${baseStyle} ${variants[variant]} ${sizes[size]} ${className}`;
-
-  return (
-    <button className={classes} {...props}>
-      {children}
-    </button>
-  );
+const VARIANTS = {
+  primary:
+    'bg-primary text-white shadow-sm shadow-primary/30 hover:bg-green-800 focus-visible:ring-primary/40',
+  success:
+    'bg-success text-sidebar font-bold hover:brightness-95 focus-visible:ring-success/50',
+  outline:
+    'border border-border-subtle bg-white text-gray-700 hover:border-primary/40 hover:text-primary hover:bg-primary/5 focus-visible:ring-primary/30',
+  danger:
+    'bg-danger text-white shadow-sm shadow-danger/30 hover:bg-red-700 focus-visible:ring-danger/40',
+  ghost:
+    'bg-transparent text-gray-600 hover:bg-primary/10 hover:text-primary focus-visible:ring-primary/30',
 };
+
+const SIZES = {
+  sm: 'h-8 px-3 text-xs',
+  md: 'h-10 px-4 text-sm',
+  lg: 'h-12 px-6 text-base',
+  icon: 'h-10 w-10 p-0',
+};
+
+export const Button = ({
+  children,
+  variant = 'primary',
+  size = 'md',
+  loading = false,
+  disabled,
+  className = '',
+  ...props
+}) => (
+  <button
+    className={`inline-flex items-center justify-center gap-2 rounded-xl font-semibold transition-all
+      focus:outline-none focus-visible:ring-4 focus-visible:ring-offset-1 active:scale-[0.97]
+      disabled:opacity-50 disabled:pointer-events-none
+      ${VARIANTS[variant] || VARIANTS.primary} ${SIZES[size] || SIZES.md} ${className}`}
+    disabled={disabled || loading}
+    {...props}
+  >
+    {loading && <Spinner size="sm" tone={variant === 'outline' || variant === 'ghost' ? 'brand' : 'light'} />}
+    {children}
+  </button>
+);

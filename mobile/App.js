@@ -22,6 +22,15 @@ import NetInfo from '@react-native-community/netinfo';
 import { syncNow } from './state/syncSlice';
 import { hydrateAuth } from './state/authSlice';
 import ReceiptScreen from './modules/sales/ReceiptScreen';
+import { Splash } from './ui/Splash';
+import {
+  useFonts,
+  Manrope_400Regular,
+  Manrope_500Medium,
+  Manrope_600SemiBold,
+  Manrope_700Bold,
+  Manrope_800ExtraBold,
+} from '@expo-google-fonts/manrope';
 
 const Stack = createStackNavigator();
 const Tabs = createBottomTabNavigator();
@@ -40,7 +49,7 @@ function MainTabs() {
           backgroundColor: theme.colors.bg,
           borderTopColor: theme.colors.border,
         },
-        tabBarActiveTintColor: theme.colors.gold,
+        tabBarActiveTintColor: theme.colors.accent,
         tabBarInactiveTintColor: theme.colors.muted,
       }}>
       <Tabs.Screen
@@ -83,8 +92,8 @@ function RootStack() {
   const token = useSelector((s) => s.auth.token);
   const hydrated = useSelector((s) => s.auth.hydrated);
 
-  // Avoid flashing the wrong navigator before SecureStore loads
-  if (!hydrated) return null;
+  // Branded splash while SecureStore loads, so the wrong navigator never flashes
+  if (!hydrated) return <Splash />;
 
   return (
     <Stack.Navigator initialRouteName={token ? 'Main' : 'Auth'}>
@@ -104,6 +113,14 @@ function RootStack() {
 }
 
 export default function App() {
+  const [fontsLoaded] = useFonts({
+    Manrope_400Regular,
+    Manrope_500Medium,
+    Manrope_600SemiBold,
+    Manrope_700Bold,
+    Manrope_800ExtraBold,
+  });
+
   React.useEffect(() => {
     initDb().catch(() => {
       // keep app running; errors will show in console
@@ -122,6 +139,9 @@ export default function App() {
     });
     return () => unsub();
   }, []);
+
+  // Splash is text-free, so it can render before the fonts are ready.
+  if (!fontsLoaded) return <Splash />;
 
   return (
     <Provider store={store}>

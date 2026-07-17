@@ -13,8 +13,7 @@ const Signup = ({ onLogin }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    password: '',
-    role: 'Admin'
+    password: ''
   });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -49,11 +48,16 @@ const Signup = ({ onLogin }) => {
 
       <Card className="w-full max-w-md p-10 shadow-2xl relative z-10 border-white/40 bg-white/80 backdrop-blur-xl">
         <div className="flex flex-col items-center mb-8">
-          <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center text-white font-black text-3xl mb-4 shadow-xl shadow-primary/30">
-            M
-          </div>
-          <h1 className="text-2xl font-black text-sidebar tracking-tight">Create Account</h1>
-          <p className="text-slate-400 text-sm font-medium mt-1 uppercase tracking-widest text-[10px]">Join Miccs POS Enterprise</p>
+          <img
+            src="/images/logo.png"
+            alt="Belcit Trading"
+            className="w-24 h-24 rounded-full object-cover mb-4 shadow-xl shadow-primary/20 ring-4 ring-white"
+          />
+          <h1 className="text-2xl font-black text-sidebar tracking-tight">First-Time Setup</h1>
+          <p className="text-slate-400 text-sm font-medium mt-1 uppercase tracking-widest text-[10px]">Create the administrator account</p>
+          <p className="text-slate-400 text-xs font-medium mt-3 text-center">
+            This only works on a fresh installation. Once an account exists, staff accounts are created by an administrator from the People page.
+          </p>
         </div>
 
         {error && (
@@ -83,7 +87,7 @@ const Signup = ({ onLogin }) => {
               label="Email Address" 
               name="email"
               type="email" 
-              placeholder="admin@miccspos.co.zw"
+              placeholder="admin@belcit.co.zw"
               value={formData.email}
               onChange={handleChange}
               required
@@ -112,28 +116,14 @@ const Signup = ({ onLogin }) => {
             </button>
           </div>
 
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-bold text-slate-500 uppercase tracking-widest">Account Role</label>
-            <select
-              name="role"
-              value={formData.role}
-              onChange={handleChange}
-              className="w-full h-11 px-4 bg-white/50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-4 focus:ring-primary/5 focus:border-primary transition-all font-medium appearance-none"
-            >
-              <option value="Admin">System Administrator</option>
-              <option value="Manager">Store Manager</option>
-              <option value="Cashier">Cashier / Staff</option>
-            </select>
-          </div>
-
-          <Button 
+          <Button
             type="submit" 
-            className="w-full py-7 text-sm font-black uppercase tracking-widest shadow-xl shadow-primary/25 bg-primary hover:bg-blue-700 transition-all active:scale-95 flex items-center justify-center gap-2 group"
+            className="w-full py-7 text-sm font-black uppercase tracking-widest shadow-xl shadow-primary/25 bg-primary hover:bg-green-700 transition-all active:scale-95 flex items-center justify-center gap-2 group"
             disabled={loading}
           >
             {loading ? <Loader2 className="animate-spin" /> : (
               <>
-                Register Account <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                Create Admin Account <ChevronRight size={18} className="group-hover:translate-x-1 transition-transform" />
               </>
             )}
           </Button>

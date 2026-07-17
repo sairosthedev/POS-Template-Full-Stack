@@ -1,6 +1,6 @@
 import * as SecureStore from 'expo-secure-store';
 
-const LIST_KEY = 'miccs.deviceAccounts';
+const LIST_KEY = 'belcit.deviceAccounts';
 
 export async function listDeviceAccounts() {
   const raw = await SecureStore.getItemAsync(LIST_KEY);

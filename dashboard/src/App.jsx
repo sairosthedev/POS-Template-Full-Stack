@@ -12,6 +12,7 @@ import SystemSettings from './modules/settings/SettingsPage';
 import Support from './modules/support/SupportPage';
 import Login from './modules/auth/Login';
 import Signup from './modules/auth/Signup';
+import { Splash } from './components/ui/Splash';
 import './index.css';
 
 const roleLower = (u) => String(u?.role || '').toLowerCase();
@@ -27,6 +28,7 @@ const RequireRole = ({ user, allow, children }) => {
 function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [booting, setBooting] = useState(true);
 
   useEffect(() => {
     const savedUser = localStorage.getItem('user');
@@ -34,6 +36,9 @@ function App() {
       setUser(JSON.parse(savedUser));
     }
     setLoading(false);
+    // Hold the branded splash briefly so boot doesn't flash.
+    const t = setTimeout(() => setBooting(false), 1100);
+    return () => clearTimeout(t);
   }, []);
 
   const handleLogin = (userData) => {
@@ -46,7 +51,7 @@ function App() {
     setUser(null);
   };
 
-  if (loading) return null;
+  if (loading || booting) return <Splash />;
 
   if (!user) {
     return (

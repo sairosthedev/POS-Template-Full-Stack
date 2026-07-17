@@ -3,7 +3,7 @@
  */
 exports.formatReceiptText = (sale, companySettings) => {
   let receipt = `--------------------------------\n`;
-  receipt += `        ${companySettings.companyName || 'MICCS POS'}        \n`;
+  receipt += `        ${companySettings.companyName || 'BELCIT TRADING'}        \n`;
   receipt += `        ${companySettings.address || ''}        \n`;
   receipt += `--------------------------------\n`;
   receipt += `Date: ${new Date(sale.createdAt).toLocaleString()}\n`;

@@ -11,10 +11,18 @@ export function TextField({
   autoCapitalize,
   keyboardType,
 }) {
+  const [focused, setFocused] = React.useState(false);
+
   return (
     <View style={{ width: '100%' }}>
       {label ? (
-        <Text style={{ ...theme.text.small, color: theme.colors.muted, marginBottom: 8 }}>
+        <Text
+          style={{
+            fontSize: 13,
+            fontFamily: theme.fonts.semibold,
+            color: theme.colors.muted,
+            marginBottom: 8,
+          }}>
           {label}
         </Text>
       ) : null}
@@ -22,21 +30,24 @@ export function TextField({
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
-        placeholderTextColor="rgba(234, 240, 255, 0.45)"
+        placeholderTextColor="rgba(240, 247, 238, 0.35)"
         secureTextEntry={secureTextEntry}
         autoCapitalize={autoCapitalize}
         keyboardType={keyboardType}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
         style={{
           backgroundColor: theme.colors.surface,
-          borderWidth: 1,
-          borderColor: theme.colors.border,
+          borderWidth: 1.5,
+          borderColor: focused ? theme.colors.accent : theme.colors.border,
           color: theme.colors.text,
-          paddingVertical: 12,
-          paddingHorizontal: 14,
+          fontFamily: theme.fonts.medium,
+          fontSize: 15,
+          height: 52,
+          paddingHorizontal: 16,
           borderRadius: theme.radius.md,
         }}
       />
     </View>
   );
 }
-

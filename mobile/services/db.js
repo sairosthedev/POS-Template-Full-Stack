@@ -4,7 +4,7 @@ let dbPromise;
 
 async function getDb() {
   if (!dbPromise) {
-    dbPromise = SQLite.openDatabaseAsync('miccs-pos.db');
+    dbPromise = SQLite.openDatabaseAsync('belcit-pos.db');
   }
   return dbPromise;
 }
@@ -58,6 +58,15 @@ export async function initDb() {
       type TEXT NOT NULL,
       payload TEXT NOT NULL,
       createdAt TEXT NOT NULL
+    );
+
+    CREATE TABLE IF NOT EXISTS sync_failed (
+      _id TEXT PRIMARY KEY NOT NULL,
+      type TEXT NOT NULL,
+      payload TEXT NOT NULL,
+      createdAt TEXT NOT NULL,
+      failedAt TEXT NOT NULL,
+      reason TEXT
     );
   `);
 }
@@ -138,5 +147,34 @@ export async function getSyncQueue({ limit = 20 } = {}) {
 export async function deleteSyncQueueItem(id) {
   const db = await getDb();
   await db.runAsync(`DELETE FROM sync_queue WHERE _id = ?`, [String(id)]);
+}
+
+// The server permanently rejected this item (4xx). Park it in sync_failed so it
+// stops blocking the queue but is still auditable on the device.
+export async function markSyncQueueItemFailed(item, reason) {
+  const db = await getDb();
+  await db.withTransactionAsync(async () => {
+    await db.runAsync(
+      `INSERT OR REPLACE INTO sync_failed (_id, type, payload, createdAt, failedAt, reason)
+       VALUES (?, ?, ?, ?, ?, ?)`,
+      [
+        String(item._id),
+        String(item.type),
+        String(item.payload ?? '{}'),
+        String(item.createdAt ?? ''),
+        new Date().toISOString(),
+        reason == null ? null : String(reason),
+      ],
+    );
+    await db.runAsync(`DELETE FROM sync_queue WHERE _id = ?`, [String(item._id)]);
+  });
+}
+
+export async function getFailedSyncItems({ limit = 50 } = {}) {
+  const db = await getDb();
+  return db.getAllAsync(
+    `SELECT * FROM sync_failed ORDER BY failedAt DESC LIMIT ?`,
+    [Number(limit)],
+  );
 }
 

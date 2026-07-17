@@ -40,7 +40,7 @@ export default function SettingsScreen({ navigation }) {
           <Text style={{ ...theme.text.body, color: theme.colors.muted, marginBottom: 6 }}>
             API
           </Text>
-          <Text style={{ color: theme.colors.text, fontWeight: '800' }}>{API_BASE_URL}</Text>
+          <Text style={{ color: theme.colors.text, fontFamily: theme.fonts.extrabold }}>{API_BASE_URL}</Text>
         </Card>
 
         <PrimaryButton

@@ -5,8 +5,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { theme } from './theme';
 
 export function HeaderBar({
-  title = 'MICCS',
-  subtitle = 'TECHNOLOGIES',
+  title = 'BELCIT',
+  subtitle = 'TRADING',
   onBack,
   rightIcon = 'grid-outline',
   onRightPress,
@@ -50,7 +50,7 @@ export function HeaderBar({
         </Pressable>
 
         <View style={{ flex: 1, alignItems: 'center' }}>
-          <Text style={{ color: theme.colors.text, fontWeight: '900', letterSpacing: 1 }}>
+          <Text style={{ color: theme.colors.text, fontFamily: theme.fonts.extrabold, letterSpacing: 1 }}>
             {title}
           </Text>
           <Text style={{ color: theme.colors.muted, fontSize: 11, letterSpacing: 1 }}>
@@ -79,13 +79,13 @@ export function HeaderBar({
                 height: 18,
                 paddingHorizontal: 5,
                 borderRadius: 999,
-                backgroundColor: theme.colors.gold,
+                backgroundColor: theme.colors.accent,
                 alignItems: 'center',
                 justifyContent: 'center',
                 borderWidth: 1,
                 borderColor: 'rgba(0,0,0,0.15)',
               }}>
-              <Text style={{ color: '#1C2B45', fontWeight: '900', fontSize: 11 }}>
+              <Text style={{ color: '#0E2413', fontFamily: theme.fonts.extrabold, fontSize: 11 }}>
                 {badge > 99 ? '99+' : String(badge)}
               </Text>
             </View>

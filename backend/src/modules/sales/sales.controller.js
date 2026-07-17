@@ -4,80 +4,122 @@ const User = require('../users/user.model');
 const InventoryLog = require('../inventory/inventory.model');
 const { successResponse, errorResponse } = require('../../utils/apiResponse');
 
+const generateReceiptNo = () =>
+  `R${Date.now().toString(36)}${Math.floor(Math.random() * 46656)
+    .toString(36)
+    .padStart(3, '0')}`.toUpperCase();
+
 exports.createSale = async (req, res) => {
   const cashierId = req.user?.id;
-  const cashier = await User.findById(cashierId).select('branchId').lean();
-  const branchId = cashier?.branchId || null;
-  const { items, paymentMethod, amountReceived, change } = req.body;
-  if (!items || items.length === 0) return errorResponse(res, 'No items in sale', 400);
   if (!cashierId) return errorResponse(res, 'Not authorized', 401);
+  const { items, paymentMethod, amountReceived, change, clientSaleId } = req.body;
+  if (!items || items.length === 0) return errorResponse(res, 'No items in sale', 400);
 
   try {
+    // Idempotency: offline devices retry queued sales, so a sale we already
+    // processed must be acknowledged, not recorded twice.
+    if (clientSaleId) {
+      const existing = await Sale.findOne({ clientSaleId });
+      if (existing) return successResponse(res, existing, 'Sale already processed', 200);
+    }
+
+    const cashier = await User.findById(cashierId).select('branchId').lean();
+    const branchId = cashier?.branchId || null;
+
     let total = 0;
     const normalizedItems = [];
-    const productUpdates = [];
+    const deducted = [];
 
-    // First pass: validate stock
-    for (const item of items) {
-      const qty = Number(item.quantity || 0);
-      if (!item.productId || qty <= 0) continue;
-      const product = await Product.findById(item.productId);
-      if (product) {
-        const available = Number(product.stock ?? 0);
-        if (available < qty) {
-          return errorResponse(res, `Insufficient stock for "${product.name}". Available: ${available}`, 400);
+    try {
+      for (const item of items) {
+        const qty = Number(item.quantity || 0);
+        if (!item.productId || qty <= 0) continue;
+
+        // Conditional atomic decrement: only succeeds if enough stock remains,
+        // so concurrent sales cannot oversell.
+        const product = await Product.findOneAndUpdate(
+          { _id: item.productId, stock: { $gte: qty } },
+          { $inc: { stock: -qty } },
+          { returnDocument: 'after' },
+        );
+        if (!product) {
+          const current = await Product.findById(item.productId).select('name stock').lean();
+          if (!current) continue; // unknown product: skip, matching previous behavior
+          const err = new Error(
+            `Insufficient stock for "${current.name}". Available: ${Number(current.stock ?? 0)}`,
+          );
+          err.statusCode = 400;
+          throw err;
         }
-        productUpdates.push({ product, qty, item });
+        deducted.push({ productId: product._id, qty, previousStock: Number(product.stock) + qty });
+
+        // Always charge the server-side price; the client's price is not trusted.
+        const price = Number(product.price ?? 0);
+        total += price * qty;
+        normalizedItems.push({
+          productId: product._id,
+          name: product.name,
+          quantity: qty,
+          price,
+        });
       }
-    }
 
-    // Second pass: deduct stock and build items
-    for (const { product, qty, item } of productUpdates) {
-      const price = Number(item.price ?? product.price ?? 0);
-      total += price * qty;
-      const previousStock = Number(product.stock ?? 0);
-      product.stock -= qty;
-      await product.save();
+      if (normalizedItems.length === 0) {
+        const err = new Error('No valid items in sale');
+        err.statusCode = 400;
+        throw err;
+      }
 
-      await InventoryLog.create({
-        productId: product._id,
-        changeType: 'Sale',
-        quantity: qty,
-        previousStock,
-        newStock: product.stock,
-        note: 'POS sale',
-        performedBy: cashierId,
+      const pm = String(paymentMethod || 'cash').toLowerCase();
+      const pmNormalized =
+        pm === 'cash' ? 'Cash' : pm === 'card' ? 'Card' : pm === 'mobile' ? 'Mobile' : pm;
+
+      const sale = new Sale({
+        cashierId,
+        branchId,
+        items: normalizedItems,
+        paymentMethod: pmNormalized,
+        total,
+        amountReceived: Number(amountReceived || 0),
+        change: Number(change || 0),
+        receiptNo: generateReceiptNo(),
+        clientSaleId: clientSaleId || undefined,
+        status: 'Completed',
       });
+      const saved = await sale.save();
 
-      normalizedItems.push({
-        productId: product._id,
-        name: product.name,
-        quantity: qty,
-        price,
-      });
+      // Log inventory movements only after the sale is committed, so logs never
+      // reference a sale that was rolled back.
+      for (const d of deducted) {
+        await InventoryLog.create({
+          productId: d.productId,
+          changeType: 'Sale',
+          quantity: d.qty,
+          previousStock: d.previousStock,
+          newStock: d.previousStock - d.qty,
+          note: 'POS sale',
+          performedBy: cashierId,
+        });
+      }
+
+      return successResponse(res, saved, 'Sale processed successfully', 201);
+    } catch (err) {
+      // Restore any stock already deducted before the failure.
+      await Promise.all(
+        deducted.map((d) =>
+          Product.updateOne({ _id: d.productId }, { $inc: { stock: d.qty } }),
+        ),
+      );
+
+      // Two devices raced on the same clientSaleId: the other one won, return its sale.
+      if (err?.code === 11000 && clientSaleId) {
+        const existing = await Sale.findOne({ clientSaleId });
+        if (existing) return successResponse(res, existing, 'Sale already processed', 200);
+      }
+      throw err;
     }
-
-    if (normalizedItems.length === 0) return errorResponse(res, 'No valid items in sale', 400);
-
-    const pm = String(paymentMethod || 'cash').toLowerCase();
-    const pmNormalized =
-      pm === 'cash' ? 'Cash' : pm === 'card' ? 'Card' : pm === 'mobile' ? 'Mobile' : pm;
-
-    const sale = new Sale({
-      cashierId,
-      branchId,
-      items: normalizedItems,
-      paymentMethod: pmNormalized,
-      total,
-      amountReceived: Number(amountReceived || 0),
-      change: Number(change || 0),
-      receiptNo: `R${Date.now().toString().slice(-6)}`,
-      status: 'Completed',
-    });
-    const saved = await sale.save();
-    return successResponse(res, saved, 'Sale processed successfully', 201);
   } catch (error) {
-    return errorResponse(res, error.message);
+    return errorResponse(res, error.message, error.statusCode || 500);
   }
 };
 

@@ -7,7 +7,7 @@ import { Button } from '../../components/ui/Button';
 
 const API = ''; // baseURL is configured globally (services/axios.config.js)
 
-const COLORS = ['#2563EB', '#3B82F6', '#60A5FA', '#93C5FD', '#BFDBFE'];
+const COLORS = ['#2E7D32', '#43A047', '#7AC143', '#A8D97C', '#D4EDBC'];
 
 const StatBadge = ({ icon, label, value, sub }) => (
   <Card className="flex items-center gap-5 border-slate-100 shadow-xl shadow-slate-200/50 hover:border-primary/20 hover:scale-[1.02] transition-all duration-300">
@@ -106,7 +106,7 @@ const Reports = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
         <StatBadge icon={<DollarSign size={24} className="text-primary" />} label="Gross Turnover" value={`$${Number(stats.grossSales).toLocaleString(undefined, {minimumFractionDigits: 2})}`} />
         <StatBadge icon={<TrendingUp size={24} className="text-success" />} label="Net Contribution" value={`$${Number(stats.netSales).toLocaleString(undefined, {minimumFractionDigits: 2})}`} />
-        <StatBadge icon={<ShoppingCart size={24} className="text-indigo-500" />} label="Total Activity" value={stats.transactions || 0} sub="Closed transactions" />
+        <StatBadge icon={<ShoppingCart size={24} className="text-emerald-500" />} label="Total Activity" value={stats.transactions || 0} sub="Closed transactions" />
         <StatBadge icon={<Package size={24} className="text-warning" />} label="Volume Moved" value={stats.productsSold || 0} sub="Items delivered" />
       </div>
 
@@ -132,7 +132,7 @@ const Reports = () => {
                   contentStyle={{ border: 'none', borderRadius: '16px', boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1)', fontWeight: 800, fontSize: '12px' }}
                   formatter={v => [`$${v}`, 'Revenue']} 
                 />
-                <Bar dataKey="total" fill="#2563EB" radius={[8, 8, 0, 0]} barSize={40} />
+                <Bar dataKey="total" fill="#2E7D32" radius={[8, 8, 0, 0]} barSize={40} />
               </BarChart>
             </ResponsiveContainer>
           )}
@@ -192,7 +192,7 @@ const Reports = () => {
                   </td>
                   <td className="px-8 py-5 text-sm font-bold text-text-main">{sale.items?.length || 0} Product(s)</td>
                   <td className="px-8 py-5">
-                    <span className="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-blue-50 text-primary border border-blue-100">
+                    <span className="px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-green-50 text-primary border border-green-100">
                       {sale.paymentMethod}
                     </span>
                   </td>

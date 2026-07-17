@@ -41,10 +41,12 @@ const Login = ({ onLogin }) => {
 
       <Card className="w-full max-w-md p-10 shadow-2xl relative z-10 border-white/40 bg-white/80 backdrop-blur-xl">
         <div className="flex flex-col items-center mb-10">
-          <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center text-white font-black text-3xl mb-4 shadow-xl shadow-primary/30">
-            M
-          </div>
-          <h1 className="text-2xl font-black text-sidebar tracking-tight">MICCS POS</h1>
+          <img
+            src="/images/logo.png"
+            alt="Belcit Trading"
+            className="w-24 h-24 rounded-full object-cover mb-4 shadow-xl shadow-primary/20 ring-4 ring-white"
+          />
+          <h1 className="text-2xl font-black text-sidebar tracking-tight">BELCIT TRADING</h1>
           <p className="text-slate-400 text-sm font-medium mt-1 uppercase tracking-widest text-[10px]">Cloud Back Office</p>
         </div>
 
@@ -60,7 +62,7 @@ const Login = ({ onLogin }) => {
             <Input 
               label="Email Address" 
               type="email" 
-              placeholder="admin@miccspos.co.zw"
+              placeholder="admin@belcit.co.zw"
               value={email}
               onChange={e => setEmail(e.target.value)}
               required
@@ -98,7 +100,7 @@ const Login = ({ onLogin }) => {
 
           <Button 
             type="submit" 
-            className="w-full py-7 text-sm font-black uppercase tracking-widest shadow-xl shadow-primary/25 bg-primary hover:bg-blue-700 transition-all active:scale-95"
+            className="w-full py-7 text-sm font-black uppercase tracking-widest shadow-xl shadow-primary/25 bg-primary hover:bg-green-700 transition-all active:scale-95"
             disabled={loading}
           >
             {loading ? <Loader2 className="animate-spin" /> : 'Enter Dashboard'}
@@ -114,7 +116,7 @@ const Login = ({ onLogin }) => {
 
         <div className="mt-6 pt-4 text-center">
           <p className="text-slate-300 text-[10px] font-bold uppercase tracking-widest">
-            &copy; {new Date().getFullYear()} Miccs Technologies
+            &copy; {new Date().getFullYear()} Belcit Trading
           </p>
         </div>
       </Card>

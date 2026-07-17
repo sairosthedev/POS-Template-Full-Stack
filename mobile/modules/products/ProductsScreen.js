@@ -128,7 +128,7 @@ export default function ProductsScreen({ navigation, route }) {
           borderTopColor: theme.colors.border,
         }}>
         <View style={{ flexGrow: 1, flexBasis: '48%' }}>
-          <PrimaryButton title="Scan" tone="gold" onPress={() => navigation.navigate('Scan')} />
+          <PrimaryButton title="Scan" tone="accent" onPress={() => navigation.navigate('Scan')} />
         </View>
         <View style={{ flexGrow: 1, flexBasis: '48%' }}>
           <PrimaryButton

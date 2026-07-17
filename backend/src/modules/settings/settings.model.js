@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const SettingsSchema = new mongoose.Schema({
-  companyName: { type: String, default: 'Miccs POS' },
+  companyName: { type: String, default: 'Belcit Trading' },
   currency: { type: String, default: 'USD' },
   address: { type: String, default: '' },
   phone: { type: String, default: '' },

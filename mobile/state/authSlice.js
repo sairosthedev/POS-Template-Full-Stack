@@ -2,8 +2,8 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { api, setAuthToken } from '../services/api';
 import * as SecureStore from 'expo-secure-store';
 
-const TOKEN_KEY = 'miccs.token';
-const USER_KEY = 'miccs.user';
+const TOKEN_KEY = 'belcit.token';
+const USER_KEY = 'belcit.user';
 
 export const login = createAsyncThunk(
   'auth/login',

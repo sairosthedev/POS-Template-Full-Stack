@@ -32,8 +32,8 @@ const Sidebar = ({ user }) => {
     <div className="w-[260px] bg-sidebar text-slate-400 flex flex-col h-screen shrink-0 border-r border-white/5">
       <div className="h-[70px] px-8 flex items-center justify-between border-b border-white/5">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-white font-black text-lg">M</div>
-          <span className="text-white font-bold tracking-tight text-lg">Miccs POS</span>
+          <img src="/images/logo.png" alt="Belcit Trading" className="w-9 h-9 rounded-full object-cover ring-2 ring-white/20 bg-white" />
+          <span className="text-white font-bold tracking-tight text-lg">Belcit Trading</span>
         </div>
         <Menu size={20} className="cursor-pointer hover:text-white transition-colors" />
       </div>
@@ -65,7 +65,7 @@ const Sidebar = ({ user }) => {
 
       <div className="p-6 border-t border-white/5 text-center">
         <p className="text-[10px] font-bold text-slate-600 uppercase tracking-widest leading-none">
-          &copy; {new Date().getFullYear()} Miccs Tech
+          &copy; {new Date().getFullYear()} Belcit Trading
         </p>
       </div>
     </div>

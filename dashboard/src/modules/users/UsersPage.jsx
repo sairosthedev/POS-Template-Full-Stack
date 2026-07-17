@@ -12,7 +12,7 @@ const empty = { name: '', email: '', password: '', pin: '', role: 'Cashier', bra
 
 const roleColors = {
   Admin: 'bg-purple-100 text-purple-700',
-  Manager: 'bg-blue-100 text-blue-700',
+  Manager: 'bg-green-100 text-green-700',
   Cashier: 'bg-green-100 text-green-700',
 };
 
@@ -70,7 +70,7 @@ const PeopleManagement = () => {
           <h1 className="text-2xl font-black text-text-main tracking-tight leading-none">Team Management</h1>
           <p className="text-slate-400 text-xs font-bold uppercase tracking-widest mt-1.5">Manage employee roles and permissions</p>
         </div>
-        <Button onClick={() => { setCurrent(empty); setShowPassword(false); setShowModal(true); }} className="bg-primary hover:bg-blue-700 shadow-lg shadow-primary/20 gap-2 h-11 px-6 font-bold rounded-xl active:scale-95 transition-all">
+        <Button onClick={() => { setCurrent(empty); setShowPassword(false); setShowModal(true); }} className="bg-primary hover:bg-green-700 shadow-lg shadow-primary/20 gap-2 h-11 px-6 font-bold rounded-xl active:scale-95 transition-all">
           <Plus size={18} /> Add Employee
         </Button>
       </div>
@@ -93,7 +93,7 @@ const PeopleManagement = () => {
               <TableCell>
                 <span className={`px-2.5 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider border ${
                   user.role === 'Admin' ? 'bg-purple-50 text-purple-600 border-purple-100' :
-                  user.role === 'Manager' ? 'bg-blue-50 text-primary border-blue-100' :
+                  user.role === 'Manager' ? 'bg-green-50 text-primary border-green-100' :
                   'bg-green-50 text-success border-green-100'
                 }`}>
                   {user.role}
@@ -127,7 +127,7 @@ const PeopleManagement = () => {
       <Modal isOpen={showModal} onClose={() => setShowModal(false)} title={current._id ? 'Edit Employee Profile' : 'Configure New Employee'}>
         <form onSubmit={handleSubmit} className="flex flex-col gap-6 pt-4">
           <Input label="Full Name" placeholder="e.g. Tendai M" value={current.name} onChange={e => setCurrent({ ...current, name: e.target.value })} required className="bg-slate-50/50" />
-          <Input label="Email Workspace" type="email" placeholder="tendai@miccspos.co.zw" value={current.email} onChange={e => setCurrent({ ...current, email: e.target.value })} required className="bg-slate-50/50" />
+          <Input label="Email Workspace" type="email" placeholder="tendai@belcit.co.zw" value={current.email} onChange={e => setCurrent({ ...current, email: e.target.value })} required className="bg-slate-50/50" />
 
           <div className="relative">
             <Input
@@ -175,7 +175,7 @@ const PeopleManagement = () => {
 
           <div className="flex justify-end gap-3 pt-6 border-t border-slate-100">
             <Button type="button" variant="ghost" onClick={() => setShowModal(false)} className="font-bold text-slate-500">Discard Changes</Button>
-            <Button type="submit" className="bg-primary hover:bg-blue-700 shadow-md shadow-primary/20 font-bold px-8">Save profile</Button>
+            <Button type="submit" className="bg-primary hover:bg-green-700 shadow-md shadow-primary/20 font-bold px-8">Save profile</Button>
           </div>
         </form>
       </Modal>

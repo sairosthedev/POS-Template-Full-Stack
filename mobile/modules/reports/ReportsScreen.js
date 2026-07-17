@@ -59,7 +59,7 @@ export default function ReportsScreen() {
 
         <Card style={{ marginBottom: 10 }}>
           <Text style={{ color: theme.colors.muted, marginBottom: 6 }}>Sales summary</Text>
-          <Text style={{ color: theme.colors.text, fontWeight: '900', fontSize: 20 }}>
+          <Text style={{ color: theme.colors.text, fontFamily: theme.fonts.extrabold, fontSize: 20 }}>
             {money(summary.total)}
           </Text>
           <Text style={{ color: theme.colors.muted, marginTop: 6 }}>{summary.count} sale(s)</Text>
@@ -67,15 +67,15 @@ export default function ReportsScreen() {
           <View style={{ height: 10 }} />
           <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text style={{ color: theme.colors.muted }}>Cash</Text>
-            <Text style={{ color: theme.colors.text, fontWeight: '800' }}>{money(summary.byPay.cash)}</Text>
+            <Text style={{ color: theme.colors.text, fontFamily: theme.fonts.extrabold }}>{money(summary.byPay.cash)}</Text>
           </View>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 6 }}>
             <Text style={{ color: theme.colors.muted }}>Card</Text>
-            <Text style={{ color: theme.colors.text, fontWeight: '800' }}>{money(summary.byPay.card)}</Text>
+            <Text style={{ color: theme.colors.text, fontFamily: theme.fonts.extrabold }}>{money(summary.byPay.card)}</Text>
           </View>
           <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 6 }}>
             <Text style={{ color: theme.colors.muted }}>Online</Text>
-            <Text style={{ color: theme.colors.text, fontWeight: '800' }}>{money(summary.byPay.online)}</Text>
+            <Text style={{ color: theme.colors.text, fontFamily: theme.fonts.extrabold }}>{money(summary.byPay.online)}</Text>
           </View>
         </Card>
 
@@ -88,14 +88,14 @@ export default function ReportsScreen() {
             <Card>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <View style={{ flex: 1 }}>
-                  <Text style={{ color: theme.colors.text, fontWeight: '900' }}>
+                  <Text style={{ color: theme.colors.text, fontFamily: theme.fonts.extrabold }}>
                     {String(item.paymentMethod || 'cash').toUpperCase()}
                   </Text>
                   <Text style={{ color: theme.colors.muted, marginTop: 4 }}>
                     {item.createdAt ? new Date(item.createdAt).toLocaleString() : '—'}
                   </Text>
                 </View>
-                <Text style={{ color: theme.colors.gold, fontWeight: '900' }}>{money(item.total)}</Text>
+                <Text style={{ color: theme.colors.accent, fontFamily: theme.fonts.extrabold }}>{money(item.total)}</Text>
               </View>
             </Card>
           )}

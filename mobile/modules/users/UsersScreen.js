@@ -48,7 +48,7 @@ export default function UsersScreen({ navigation }) {
 
         <Card style={{ marginBottom: 10 }}>
           <Text style={{ color: theme.colors.muted, marginBottom: 6 }}>Current session</Text>
-          <Text style={{ color: theme.colors.text, fontWeight: '900' }}>
+          <Text style={{ color: theme.colors.text, fontFamily: theme.fonts.extrabold }}>
             {user?.name || user?.email || '—'}
           </Text>
           <Text style={{ color: theme.colors.muted, marginTop: 6 }}>
@@ -58,7 +58,7 @@ export default function UsersScreen({ navigation }) {
 
         {roleLower !== 'admin' && roleLower !== 'manager' ? (
           <Card>
-            <Text style={{ color: theme.colors.danger, fontWeight: '900', marginBottom: 6 }}>
+            <Text style={{ color: theme.colors.danger, fontFamily: theme.fonts.extrabold, marginBottom: 6 }}>
               Forbidden
             </Text>
             <Text style={{ color: theme.colors.muted }}>
@@ -67,7 +67,7 @@ export default function UsersScreen({ navigation }) {
           </Card>
         ) : (
         <Card>
-          <Text style={{ color: theme.colors.text, fontWeight: '900', marginBottom: 10 }}>
+          <Text style={{ color: theme.colors.text, fontFamily: theme.fonts.extrabold, marginBottom: 10 }}>
             Create user
           </Text>
 
@@ -76,7 +76,7 @@ export default function UsersScreen({ navigation }) {
             value={name}
             onChangeText={setName}
             placeholder="Full name"
-            placeholderTextColor="rgba(234, 240, 255, 0.45)"
+            placeholderTextColor="rgba(240, 247, 238, 0.45)"
             style={fieldStyle}
           />
           <View style={{ height: 10 }} />
@@ -87,7 +87,7 @@ export default function UsersScreen({ navigation }) {
             onChangeText={setEmail}
             autoCapitalize="none"
             placeholder="email@example.com"
-            placeholderTextColor="rgba(234, 240, 255, 0.45)"
+            placeholderTextColor="rgba(240, 247, 238, 0.45)"
             style={fieldStyle}
           />
           <View style={{ height: 10 }} />
@@ -98,7 +98,7 @@ export default function UsersScreen({ navigation }) {
             onChangeText={setPassword}
             secureTextEntry
             placeholder="••••••••"
-            placeholderTextColor="rgba(234, 240, 255, 0.45)"
+            placeholderTextColor="rgba(240, 247, 238, 0.45)"
             style={fieldStyle}
           />
           <View style={{ height: 10 }} />
@@ -109,12 +109,12 @@ export default function UsersScreen({ navigation }) {
             onChangeText={setRole}
             autoCapitalize="none"
             placeholder="cashier"
-            placeholderTextColor="rgba(234, 240, 255, 0.45)"
+            placeholderTextColor="rgba(240, 247, 238, 0.45)"
             style={fieldStyle}
           />
 
           {error ? <Text style={{ color: theme.colors.danger, marginTop: 10 }}>{String(error)}</Text> : null}
-          {message ? <Text style={{ color: theme.colors.gold, marginTop: 10 }}>{String(message)}</Text> : null}
+          {message ? <Text style={{ color: theme.colors.accent, marginTop: 10 }}>{String(message)}</Text> : null}
 
           <View style={{ height: 12 }} />
           <PrimaryButton

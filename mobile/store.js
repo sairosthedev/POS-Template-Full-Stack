@@ -1,4 +1,4 @@
-// Root Redux store setup for Miccs POS mobile app
+// Root Redux store setup for Belcit POS mobile app
 import { configureStore } from '@reduxjs/toolkit';
 
 import authReducer from './state/authSlice.js';

@@ -16,6 +16,9 @@ const SaleSchema = new mongoose.Schema({
   amountReceived: { type: Number, default: 0 },
   change: { type: Number, default: 0 },
   receiptNo: { type: String, index: true },
+  // Client-generated ID for offline sync idempotency: a retried POST with the
+  // same clientSaleId must not create a second sale.
+  clientSaleId: { type: String, unique: true, sparse: true },
   status: { type: String, enum: ['Completed', 'Voided'], default: 'Completed' },
 }, { timestamps: true });
 
