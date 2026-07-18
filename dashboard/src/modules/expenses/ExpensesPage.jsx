@@ -153,7 +153,7 @@ const ExpensesManagement = () => {
             required
             className="bg-slate-50/50"
           />
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <Input 
               label="Net Amount ($)" 
               type="number"

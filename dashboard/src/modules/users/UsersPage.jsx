@@ -155,7 +155,7 @@ const PeopleManagement = () => {
             className="bg-slate-50/50 font-bold tracking-widest"
           />
 
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div className="flex flex-col gap-2">
               <label className="text-[11px] font-black text-slate-400 uppercase tracking-widest">Global Role</label>
               <select value={current.role} onChange={e => setCurrent({ ...current, role: e.target.value })}

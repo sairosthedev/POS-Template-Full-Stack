@@ -316,7 +316,7 @@ const ProductsManagement = () => {
       >
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           {/* Row 1 */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input
               label="Name"
               value={currentProduct.name}
@@ -331,7 +331,7 @@ const ProductsManagement = () => {
           </div>
 
           {/* Row 2: Category dropdown + Unit dropdown */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium text-gray-700">Category</label>
               <select
@@ -359,7 +359,7 @@ const ProductsManagement = () => {
           </div>
 
           {/* Row 3: Stock Type + Stock Alert */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
               <label className="text-sm font-medium text-gray-700">Stock Type</label>
               <select
@@ -379,7 +379,7 @@ const ProductsManagement = () => {
           </div>
 
           {/* Row 4: Cost + Price */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Input
               label="Cost"
               type="number"
